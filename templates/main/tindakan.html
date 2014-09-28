@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+{% extends 'main/base.html' %}
+{% load static %}
+
+<html>
+ <head>
+        <title>{% block title %} Tindakan {% endblock %}</title>
+    </head>
+<body>
+	{% block button_block %}
+    <h4 class="pull-left">Aksi ({{ banyak }})</h4>
+  <div class="pull-left	">
+   
+    
+			              <ul class="nav navbar-nav navbar-right">
+			                 <li class="dropdown">
+			                  <a id="status_string"  href="#" class="dropdown-toggle" data-toggle="dropdown">Status 
+			                  {% if status in 'Tunda' %}
+			                  		: Tunda
+			                  {% endif %}
+			                  {% if status in 'Proses' %}
+			                  		: Proses
+			                  {% endif %}
+			                  {% if status in 'Selesai' %}
+			                  		: Selesai
+			                  {% endif %}
+			                  {% if status in 'Batal' %}
+			                  		: Batal
+			                  {% endif %}
+			                     <b class="caret"></b></a>
+
+			                  <span class="dropdown-arrow"></span>
+			                  <ul class="dropdown-menu" style="background-color:#48C9B0;">
+			                    <li><a href="/main/">Semua</a></li>
+			                    
+			                    <li class="divider"></li>
+			                  	<li><a href="/main/tindakan/?filter=status&status=Proses">Proses</a></li>
+			                  	<li><a href="/main/tindakan/?filter=status&status=Tunda">Tunda</a></li>
+			                  	<li><a href="/main/tindakan/?filter=status&status=Batal">Batal</a></li>
+			                  	<li><a href="/main/tindakan/?filter=status&status=Selesai">Selesai</a></li>
+				                    
+			                  </ul>
+			              </ul>
+			        
+			</div>
+	<div class="pull-right">
+			<a class="btn btn-primary" href="#tindakan_modal" data-toggle="modal"><span class="fui-plus"></span><span id="tindakanbaru_label">Tindakan baru</span></a>
+			
+
+			<a href="#" class="btn btn-default">Ekspor laporan ke Excel</a>
+			
+
+
+		</div><br><br>
+	{% endblock %}
+	{% block body_block %}
+		
+		<table width="100%" class="table table-striped table-hover table-bordered">
+			<thead>
+			<tr>
+				<td align="center" width="13%"><strong>Tanggal</strong></td>
+				<td align="center" width="10%"><strong>Kategori</strong></td>
+				<td align="center" width="25%"><strong>Perangkat</strong></td>
+				<td align="center" width="10%"><strong>Jenis tindakan</strong></td>
+				<td align="center" width="35%"><strong>Tiket</strong></td>
+				<td align="center" width="5%"><strong>Status</strong></td>
+			</tr>
+			</thead>
+				{% for tindakan in tindakan_list %}
+					<tr>
+						<td>{{ tindakan.tanggal_buka }}</td>
+						<td>{{ tindakan.noid_hw.kathw.kathw }}</td>
+						<td>
+						<a href="/main/tindakan_detail/?id={{ tindakan.noid_tin }}">
+						{{ tindakan.noid_hw.merek }} - {{ tindakan.noid_hw.tipe }} / {{ tindakan.noid_hw.lokasi.lokasi }}
+						</a>
+						</td>
+						<td>{{ tindakan.jenis_tindakan }}</td>	
+						<td>{{ tindakan.masalah }}</td>				
+						<td align="center">
+							{% if tindakan.status in 'Proses' %}
+							    <span class="input-icon fui-gear"></span>
+							{% else %}
+							    {% if tindakan.status in 'Tunda' %}
+							        <span class="input-icon fui-pause"></span>
+							    {% else %}
+							        {% if tindakan.status in 'Batal' %}
+							            <span class="input-icon fui-cross"></span>
+							        {% else %}
+							            {% if tindakan.status in 'Selesai' %}
+							            	 <span class="input-icon fui-check"></span>
+							            {% endif %}
+							        {% endif %}
+							    {% endif %}
+							{% endif %}
+						</td>
+						<!-- <td><a href="/main/tindakan_detail/?id={{ tindakan.noid_tin }}"><span class="fui-list"></span></a></td>
+						<script type="text/javascript">
+						function confirm_delete() {
+						  return confirm('Anda yakin ingin menghapus?');
+						}
+						</script>
+						<td><a href="/main/hapus_tindakan/?hapus={{ tindakan.noid_tin }}" onclick="return confirm_delete()"><span class="fui-cross"></span></a></td> -->
+					</tr>
+				{% endfor %}
+		</table>
+		<div class="modal fade" id="tindakan_modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+		    <div class="modal-dialog">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		            
+		            <h4 class="modal-title" id="myModalLabel">Tindakan pemeliharaan baru</h4>
+		            </div>
+		            <div class="modal-body">
+		                <form class="form form-horizontal" name="tindakan_baru" method="post" action="/main/">
+		                	{% csrf_token %}
+		                	<div class="form-group">
+		                		<input id="noid_hw" type="hidden" name="noid_hw">
+		                		<label class="control-label col-sm-3">Nama Perangkat</label>
+		                		<div class="col-sm-9">
+		                			
+									<div id="perangkat_search" ></div>
+		                			
+
+		                			<!-- <div id="search_bar"></div> -->
+								<script src="{% static 'js/jquery-1.8.3.min.js' %}"></script>
+								<script src="{% static 'autocomplete/autocomplete-0.3.0.js' %}"></script>
+								<script>
+									var config = {
+									  maxTokenGroups: 1,
+									  placeholderHTML: 'Cari...',
+									  lists: {
+									    fruits: [
+
+									    {% for perangkat in perangkat_list %}
+							            '{{ perangkat.noid_hw }} | {{ perangkat.kathw.kathw }} / {{ perangkat.merek }}-{{ perangkat.tipe }} / {{ perangkat.lokasi.lokasi }} / {{ perangkat.username.first_name }}',
+							            {% endfor %}
+
+									    ]
+									  }
+									};
+									var widget = new AutoComplete('perangkat_search', config);
+									
+									var nilai= document.getElementById('perangkat_search').find('.token-75233').innerHTML;
+									
+									function sync(matchClass) {
+									    var elems = document.getElementsByTagName('*'), i;
+									    for (i in elems) {
+									        if((' ' + elems[i].className + ' ').indexOf(' ' + matchClass + ' ')
+									                > -1) {
+									           document.getElementById('noid_hw').value = elems[i].innerHTML;
+									        }
+									    }
+									}
+
+									
+									</script>
+
+		                			
+		                		<!-- <select name="noid_hw" value="" class="form-control input-x-large" width="100%">
+
+							            {% for perangkat in perangkat_list %}
+							            <option value="{{ perangkat.noid_hw }}">{{ perangkat.merek }} - {{ perangkat.tipe }} / {{ perangkat.lokasi.lokasi }}</option>
+							            {% endfor %}
+							           	            
+							          </select> -->
+		                		</div>
+		                	</div>	
+		                	<div class="form-group">
+		                		<label class="control-label col-sm-3">Tanggal</label>
+		                		<div class="col-sm-9">
+		                		<input type="text" id="datepicker" class="form-control" name="tanggal_buka" placeholder="Tanggal" value="">
+
+		                		</div>
+		                	</div>	
+		                	<div class="form-group">
+		                		<label class="control-label col-sm-3">Tiket</label>
+		                		<div class="col-sm-9">
+		                		<textarea type="text" class="form-control" name="masalah" placeholder="Masalah / Tugas" value=""></textarea>
+		                		</div>
+		                	</div>	
+		                	<div class="form-group">
+		                		<label class="control-label col-sm-3">Penyelesaian</label>
+		                		<div class="col-sm-9">
+		                		<textarea type="text" class="form-control" name="penyelesaian" placeholder="Rencana Penyelesaian / Solusi" value=""></textarea>
+		                		</div>
+		                	</div>	
+		                	<div class="form-group">
+		                		<label class="control-label col-sm-3">Jenis tindakan</label>
+		                		<div class="col-sm-9">
+		                			<select name="jenis_tindakan" value="" class="form-control input-x-large" width="100%">
+							            <option value="" selected disabled>---</option>
+							            <option value="Hardware">Hardware</option>
+							            <option value="Software">Software</option>
+							            <option value="Jaringan">Jaringan</option>
+							            <option value="Mutasi lokasi">Mutasi lokasi</option>
+							            <option value="Lainnya">Lainnya</option>		            
+							          </select>
+		                		</div>
+		                	</div>	
+		            </div>
+		            <div class="modal-footer">
+		            	<input type="hidden" name="status" value="Proses">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+		                <button type="button input" class="btn btn-primary" onclick="sync('token-75233')">Simpan</button>
+		                </form>
+		        </div>
+		    </div>
+		  </div>
+		</div>
+	{% endblock %}
+</body>
+</html>

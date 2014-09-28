@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+    <head>
+	<!-- Loading Bootstrap -->
+    <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+
+
+    <!-- Loading Flat UI -->
+    <link href="{% static 'css/flat-ui.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/jquery-ui.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/drag.css' %}" rel="stylesheet">
+    <link href="{% static 'autocomplete/autocomplete-0.3.0.css' %}" rel="stylesheet">
+
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+        <title>The IT Crowd</title>
+    
+    </head>
+
+    <body>
+    	<br>
+ 	<div class="container">
+ 		<div class="demo-row">
+		 	<div class="row demo-row">
+		          <nav class="navbar navbar-inverse navbar-embossed" role="navigation">
+		            <div class="navbar-header">
+		              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
+		                <span class="sr-only">Toggle navigation</span>
+		              </button>
+		            </div>
+		            <div class="collapse navbar-collapse" id="navbar-collapse-01">
+		              <ul class="nav navbar-nav navbar-left">           
+		              	{% if not user.is_authenticated %}
+		              	<li><a href="#">The IT Crowd</a></li>
+		                
+		                {% else %}
+		                <li><a href="/main"><span class="fui-checkbox-checked"></span> Get Things Done!</a></li>
+		                 <li class="dropdown">
+			                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fui-gear"></span> Pemeliharaan <b class="caret"></b></a>
+			                  <span class="dropdown-arrow"></span>
+			                  <ul class="dropdown-menu">
+			                    <li><a href="/main/tindakan">Aksi</a></li>
+			                    <li><a href="/main/perangkat">Perangkat</a></li>
+			                    <li class="divider"></li>
+			                    <li><a href="#">Pustaka data</a></li>
+			                  </ul>
+			                </li>           
+		                <li><a href="#"><span class="fui-new"></span> Catatan</a></li>
+		                <li><a href="#"><span class="fui-lock"></span> Akun</a></li>
+		         
+		                {% endif %}
+		               </ul>
+		               
+
+		               {% if user.is_authenticated %}
+			               <ul class="nav navbar-nav navbar-right">
+			                 <li class="dropdown">
+			                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fui-user"></span> Halo, {{ current_user }} <b class="caret"></b></a>
+			                  <span class="dropdown-arrow"></span>
+			                  <ul class="dropdown-menu">
+			                    <li><a href="/admin/password_change" target="_blank">Ganti password</a></li>
+			                    <li><a href="/admin/" target="_blank">Django Administration</a></li>
+			                    <li><a href="#">Bantuan</a></li>
+			                    <li class="divider"></li>
+			                    <li><a href="/main/logout">Logout</a></li>
+			                  </ul>
+			                </li>           
+			               </ul>
+			            {% endif %}
+		            </div><!-- /.navbar-collapse -->
+		          </nav><!-- /navbar -->
+ 		</div>
+        <div>
+        	{% block button_block %}{% endblock %}
+            {% block body_block %}{% endblock %}
+        </div>
+    </div>
+    <div class="container">
+    	<hr>
+
+		<div class="pull-right">
+		Powered by <img src="{% static 'images/python-logo.gif' %}" width="150px">and crafted with <span class="fui-heart"></span>
+		</div>
+    </div>
+
+    <script src="{% static 'js/jquery-2.0.3.min.js' %}"></script>
+    
+    <script src="{% static 'js/jquery.ui.touch-punch.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-select.js' %}"></script>
+    <script src="{% static 'js/bootstrap-switch.js' %}"></script>
+    <script src="{% static 'js/flatui-checkbox.js' %}"></script>
+    <script src="{% static 'js/flatui-radio.js' %}"></script>
+    <script src="{% static 'js/jquery.tagsinput.js' %}"></script>
+    <script src="{% static 'js/jquery.placeholder.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.js' %}"></script>
+
+	<script>
+
+	$(document).ready(function(){
+
+        
+        
+		lebar = $('.dropbox').width();
+		lebardragbox = (90/100)*lebar;
+		$('.dragbox').width(lebardragbox);
+
+        $(function(){
+            todo_c_position=$("#todo").position();
+            todo_c_top=todo_c_position.top;
+            todo_c_left=todo_c_position.left;
+            todo_c = "(" + todo_c_top + "." + todo_c_left + ")";
+            $("#todo_coordinate").text(todo_c);  
+
+            
+            doing_c_position=$("#doing").position();
+            doing_c_top=doing_c_position.top;
+            doing_c_left=doing_c_position.left;
+            doing_c = "(" + doing_c_top + "." + doing_c_left + ")";
+            $("#doing_coordinate").text(doing_c);  
+
+
+
+            done_c_position=$("#done").position();
+            done_c_top=done_c_position.top;
+            done_c_left=done_c_position.left;
+            done_c = "(" + done_c_top + "." + done_c_left + ")";
+            $("#done_coordinate").text(done_c);  
+
+
+
+
+
+
+                });
+
+	});
+
+	 $(function() {
+		$( "#datepicker" ).datepicker({ dateFormat : "dd/mm/yy"});
+	        
+        });
+	
+$(".dragbox").draggable({
+           // fungsi yang berjalan ketika dragbox sudah dilepas/dijatuhkan
+           stop:function(evt,ui){
+            
+            }
+                });
+	$(".dropbox").droppable({
+		 tolerance: 'intersect',
+		    drop: function(event, ui) {
+		    	lebar = $('.dropbox').width();
+				lebardragbox = (90/100)*lebar;
+				margindropbox = (lebar-lebardragbox)/2;
+
+
+		        var drop_p = $(this).offset();
+		        var drag_p = ui.draggable.offset();
+		        var left_end = drop_p.left - drag_p.left + margindropbox;
+		        var top_end = drop_p.top - drag_p.top + margindropbox;
+		        ui.draggable.animate({
+		            top: '+=' + top_end,
+		            left: '+=' + left_end
+                    }, function(){                 
+                        if(ui.draggable.position().top > todo_c_top && ui.draggable.position().left > todo_c_left &&  ui.draggable.position().left < doing_c_left ){
+                            $('#todo_coordinate').text('+1');
+                            } 
+                        if(ui.draggable.position().top > doing_c_top && ui.draggable.position().left > doing_c_left &&  ui.draggable.position().left < done_c_left ){
+                            $('#doing_coordinate').text('+1');
+                            }  
+
+                        if(ui.draggable.position().top > done_c_top && ui.draggable.position().left > done_c_left ){
+                            $('#done_coordinate').text('+1');
+                            }  
+
+                });
+		        
+		    }
+	});
+
+	</script>
+	
+
+    </body>
+</html>

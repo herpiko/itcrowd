@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+{% extends 'main/base.html' %}
+{% load static %}
+
+<html>
+ <head>
+    <title>{% block title %} Tindakan {% endblock %}</title>
+ 
+ </head>
+<body>
+	{% block button_block %}
+
+	<h4 class="">Get Things Done</h4>
+  
+<div>
+        <div class="dropbox" id="todo"><div class="dropbox_text">Thing(s) To Do : <span id="todo_coordinate"></span></div></div>
+        <div class="dropbox" id="doing"><div class="dropbox_text">Doing : <span id="doing_coordinate"></span></div></div>
+        <div class="dropbox" id="done"><div class="dropbox_text">Done! : <span id="done_coordinate"></span></div></div>
+        <div class="dragbox" id="1">Hello!</div>
+        <div class="dragbox" id="2">World!</div>
+        {% for tindakan in tindakan_list %} 
+            
+        <div class="dragbox" id="{{ tindakan.id }}">{{ tindakan.masalah }}</div>
+        {% endfor %}
+
+ </div>
+	{% endblock %}
+</body>
+</html>

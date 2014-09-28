@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+{% extends 'main/base.html' %}
+{% load static %}
+<html>
+<body>
+
+{% block body_block %}
+<!--  -->
+          
+		<div class="">
+			
+
+          <div class="login-form col-xs-5 pull-right">
+            {{ result }}
+            <div class="form-group">
+            <form name="login" method="post" action="/main/login/">
+            	{% csrf_token %}
+              <input type="text" class="form-control login-field" value="" placeholder="Enter your name" id="login-name" name="username" />
+              <label class="login-field-icon fui-user" for="login-name"></label>
+            </div>
+
+            <div class="form-group">
+              <input type="password" name="password" class="form-control login-field" value="" placeholder="Password" id="login-pass" />
+              <label class="login-field-icon fui-lock" for="login-pass"></label>
+            </div>
+
+            <input  type="submit" value="Log in" class="btn btn-primary btn-lg btn-block">
+            <!-- <a class="login-link" href="#">Lost your password?</a> -->
+        </form>
+          </div>
+        </div>
+        </div>
+        <div class="col-xs-3 pull-right">
+		<h1 class="pull-right">Login</h1>
+		</div>
+        </div>
+{% endblock %}
+</body>
+</html>

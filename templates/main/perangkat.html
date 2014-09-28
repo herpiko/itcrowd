@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+{% extends 'main/base.html' %}
+{% load static %}
+
+<html>
+ <head>
+        <title>{% block title %} perangkat {% endblock %}</title>
+    </head>
+<body>
+	{% block button_block %}
+	<h4 class="pull-left">Perangkat ({{ banyak }})</h4>
+	{% if lokasi not in 'Semua' or kathw not in 'Semua' %}
+	<div class="pull-right" >
+	
+			              
+			              <ul class="nav navbar-nav navbar-right">
+			                 <li class="dropdown">
+			                  <a id="filter_kategori" href="#" class="dropdown-toggle" data-toggle="dropdown">Kategori : {{ kathw }} <b class="caret"></b></a>
+			                  <span class="dropdown-arrow"></span>
+			                  <ul class="dropdown-menu" style="background-color:#48C9B0">
+			                    <li><a href="/main/perangkat/?lokasi={{ lokasi }}&kathw=Semua">Semua</a></li>
+			                    <li class="divider"></li>
+			                  	{% for kathw_items in kathw_list %}
+				                    <li><a href="/main/perangkat/?lokasi={{ lokasi }}&kathw={{ kathw_items.kathw }}">{{ kathw_items.kathw }}</a></li>
+			                    {% endfor %}
+			                  </ul>
+			              </ul>
+			              <ul class="nav navbar-nav navbar-right">
+			                 <li class="dropdown">
+			                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Lokasi : {{ lokasi }} <b class="caret"></b></a>
+			                  <span class="dropdown-arrow"></span>
+			                  <ul class="dropdown-menu" style="background-color:#48C9B0">
+			                  	<li><a href="/main/perangkat/?lokasi=Semua&kathw={{ kathw }}">Semua</a></li>
+			                    <li class="divider"></li>
+			                  	{% for lokasi_items in lokasi_list %}
+				                    <li><a href="/main/perangkat/?lokasi={{ lokasi_items.lokasi }}&kathw={{ kathw }}">{{ lokasi_items.lokasi }}</a></li>
+				                    
+			                    {% endfor %}
+			                  </ul>
+			              </ul>
+
+			              
+			        
+			
+			</div>
+	{% endif %}
+	<div id="filter_button" class="pull-right" style="display:none">
+	
+			              
+			              <ul class="nav navbar-nav navbar-right">
+			                 <li class="dropdown">
+			                  <a id="filter_kategori" href="#" class="dropdown-toggle" data-toggle="dropdown">Kategori : {{ kathw }} <b class="caret"></b></a>
+			                  <span class="dropdown-arrow"></span>
+			                  <ul class="dropdown-menu" style="background-color:#48C9B0">
+			                    <li><a href="/main/perangkat/?lokasi={{ lokasi }}&kathw=Semua">Semua</a></li>
+			                    <li class="divider"></li>
+			                  	{% for kathw_items in kathw_list %}
+				                    <li><a href="/main/perangkat/?lokasi={{ lokasi }}&kathw={{ kathw_items.kathw }}">{{ kathw_items.kathw }}</a></li>
+			                    {% endfor %}
+			                  </ul>
+			              </ul>
+			              <ul class="nav navbar-nav navbar-right">
+			                 <li class="dropdown">
+			                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Lokasi : {{ lokasi }} <b class="caret"></b></a>
+			                  <span class="dropdown-arrow"></span>
+			                  <ul class="dropdown-menu" style="background-color:#48C9B0">
+			                  	<li><a href="/main/perangkat/?lokasi=Semua&kathw={{ kathw }}">Semua</a></li>
+			                    <li class="divider"></li>
+			                  	{% for lokasi_items in lokasi_list %}
+				                    <li><a href="/main/perangkat/?lokasi={{ lokasi_items.lokasi }}&kathw={{ kathw }}">{{ lokasi_items.lokasi }}</a></li>
+				                    
+			                    {% endfor %}
+			                  </ul>
+			              </ul>
+			              <ul class="nav navbar-nav navbar-right">
+			                 <li class="dropdown">
+			                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Urut <b class="caret"></b></a>
+			                  <span class="dropdown-arrow"></span>
+			                  <ul class="dropdown-menu" style="background-color:#48C9B0">
+			                  	<li><a href="/main/perangkat">Terakhir ditambahkan</a></li>
+			                  	<li><a href="/main/perangkat">Kategori</a></li>
+			                  	<li><a href="/main/perangkat">Lokasi</a></li>
+			                  	<li><a href="/main/perangkat">Kode Barang</a></li>
+			                  	
+			                  </ul>
+			              </ul>
+			        
+			
+			</div>
+	<div class="pull-right">
+			
+			<a class="btn btn-primary" href="#perangkat_modal" data-toggle="modal"><span class="fui-plus"></span></a>
+			<!-- <a href="#" class="btn btn-default">Ekspor laporan ke Excel</a> -->
+			
+			
+		{% if lokasi not in 'Semua' or kathw not in 'Semua' %}
+			
+		{% else %}
+			<a id="filter_show" class="btn btn-default" href="#" onclick="filter_show()">Filter/Short</a>	
+		{% endif %}				                    
+		<script>
+				                    	function filter_show(){
+				                    	$('#filter_show').hide();
+				                    	$('#filter_button').slideDown();
+				                    	
+				                    	};
+				                    </script>
+
+
+		</div><br><br>
+	{% endblock %}
+
+	{% block body_block %}
+		
+		<table width="100%" class="table table-striped table-hover table-bordered">
+			<thead>
+			<tr>
+				
+				
+				<td width="15%"><strong>Kode barang</strong></td>
+				<td width="15%"><strong>Kategori</strong></td>
+				<td width="15%"><strong>Objek/Merek</strong></td>
+				<td width="15%"><strong>Subobjek/Tipe</strong></td>
+				<td width="15%"><strong>Lokasi</strong></td>
+				<td width="25%"><strong>Penanggung jawab</strong></td>
+			</tr>
+			</thead>
+				{% for perangkat in perangkat_list %}
+					<tr>
+						<td>{{ perangkat.kodebrg }}</td>
+						<td>{{ perangkat.kathw.kathw}}</td>
+						<td>{{ perangkat.merek }}</td>
+						<td>{{ perangkat.tipe }}</td>
+						<td>{{ perangkat.lokasi.lokasi }}</td>
+						<td>{{ perangkat.username.first_name }}</td>
+						<td><a href="/main/perangkat_detail/?id={{ perangkat.noid_hw }}"><span class="fui-list"></span></a></td>
+						<script type="text/javascript">
+						function confirm_delete() {
+						  return confirm('Anda yakin ingin menghapus?');
+						}
+						</script>
+						<td><a href="/main/hapus_perangkat/?hapus={{ perangkat.noid_hw }}" onclick="return confirm_delete()"><span class="fui-cross"></span></a></td>
+					</tr>
+				{% endfor %}
+		</table>
+<div class="modal fade" id="perangkat_modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            
+            <h4 class="modal-title" id="myModalLabel">Perangkat baru</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form" name="perangkat_baru" method="post" action="/main/perangkat/">
+                	{% csrf_token %}
+                	<div>
+                		<div class="col-xs-4">
+	                		<label>Kategori perangkat :
+							<select name="kathw" value="" class="form-control input-x-large" width="100%">
+								<option value="---" selected>---</option>
+					            {% for kathw in kathw_list %}
+					            	<option value="{{ kathw.kathw }}">{{ kathw.kathw }}</option>
+					            {% endfor %}
+					          </select>
+					          </label>
+                		</div>
+                		    <div class="col-xs-4">
+	                		<label>Lokasi :
+							<select name="lokasi" value="" class="form-control input-x-large" width="100%">
+								<option value="---" selected>---</option>
+					            {% for lokasi in lokasi_list %}
+					            	<option value="{{ lokasi.lokasi }}">{{ lokasi.lokasi }}</option>
+					            {% endfor %}
+					          </select>
+					          </label>
+                		</div>
+
+						<div class="col-xs-4">
+	                		<label>Penanggung Jawab :
+							<select name="username" value="" class="form-control input-x-large" width="100%">
+								<option value="---" selected>---</option>
+					            {% for user in user_list %}
+					            	<option value="{{ user.username }}">{{ user.first_name }}</option>
+					            {% endfor %}
+					          </select>
+					          </label>
+                		</div>
+                		
+                	</div>
+                	<br><br><br><hr>
+                	<div class="form-group">
+                		<label class="control-label col-sm-3">No. Inventaris</label>
+                		<div class="col-sm-9">
+                		<input type="text" class="form-control" name="kodebrg" placeholder="000.000.000.000.000.000" value="">
+                		</div>
+                	</div>	
+                	<div class="form-group">
+                		<label class="control-label col-sm-3">Objek/Merek</label>
+                		<div class="col-sm-9">
+                		<input type="text" class="form-control" name="merek" placeholder="Merek" value="">
+                		</div>
+                	</div>	
+                	<div class="form-group">
+                		<label class="control-label col-sm-3">Subobjek/Tipe</label>
+                		<div class="col-sm-9">
+                		<input type="text" class="form-control" name="tipe" placeholder="Tipe" value="">
+                		</div>
+                	</div>	
+                	<div class="form-group">
+                		<label class="control-label col-sm-3">Tahun</label>
+                		<div class="col-sm-9">
+                		<input type="text" class="form-control" name="tahun" placeholder="Tahun pengadaan" value="">
+                		</div>	
+                	</div>	
+                	<div class="form-group">
+                		<label class="control-label col-sm-3">Keterangan</label>
+                		<div class="col-sm-9">
+                		<textarea type="text" class="form-control col-sm-9" name="keterangan" placeholder="Keterangan tambahan" value=""></textarea>
+                	</div>	
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                <button type="button input" class="btn btn-primary">Simpan</button>
+                </form>
+        </div>
+    </div>
+  </div>
+</div>
+	{% endblock %}
+</body>
+</html>

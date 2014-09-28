@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+{% extends 'main/base.html' %}
+{% load static %}
+
+<html>
+ <head>
+        <title>{% block title %} Tindakan {% endblock %}</title>
+    </head>
+<body>
+	{% block button_block %}
+
+	<div class="row demo_row">
+	<h4 class="pull-left">Tindakan pemeliharaan</h4>
+	</div>
+	
+
+			<div class="pull-right">
+				<script type="text/javascript">
+						function confirm_delete() {
+						  return confirm('Anda yakin ingin menghapus?');
+						}
+				</script>
+						
+				<a href="/main/perangkat_detail/?id={{ noid_hw }}" class="btn btn-primary"><span class="fui-eye"></span> Detail perangkat</a>
+				<a href="#" class="btn btn-primary"><img src="{% static 'images/icons/svg/clipboard.svg' %}" width="20"> Cetak</a>
+				<a href="/main/hapus_tindakan/?hapus={{ noid_tin }}" onclick="return confirm_delete()" class="btn btn-danger"><span class="fui-check-inverted"></span>  Hapus</a>
+			</div>           
+	{% endblock %}
+	{% block body_block %}
+
+		<div class="row demo_row">
+	<div class="pull-left">
+		<form class="form" method="POST" action="/main/tindakan_status/">
+			{% csrf_token %}
+	<table>
+		<tr>
+			<td width="150">
+				Pembuat tiket
+			</td>
+			<td>
+				: {{ first_name }}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Tanggal tiket
+			</td>
+			<td>
+				: {{ tanggal_buka }}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Tanggal tiket ditutup
+			</td>
+			<td>
+				<input class="form-control" id="datepicker" style="width:200px" type="text" name="tanggal_tutup" value="{{ tanggal_tutup }}">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Perangkat
+			</td>
+			<td>
+				: {{ merek }} - {{ tipe }} / {{ lokasi }}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Kategori perangkat
+			</td>
+			<td>
+				: {{ kathw }}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Jenis tindakan
+			</td>
+			<td>
+				: {{ jenis_tindakan }}
+			</td>
+		</tr>
+		
+		<tr>
+			<td valign="top">
+				Tiket
+			</td>
+			<td>
+				<div class="form-group"><textarea rows="5" cols="50" name="masalah" class="form-control">{{ masalah }}</textarea></div>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+				Penyelesaian
+			</td>
+			<td>
+				<div class="form-group"><textarea rows="5" cols="50" name="penyelesaian" class="form-control">{{ penyelesaian }}</textarea></div>
+			</td>
+		</tr>
+		<tr><td></td></tr>
+		
+		<tr>
+			<td>Status</td>
+			<td>
+				 <div class="btn-toolbar">
+                <div class="btn-group">
+                	
+                  <input class="btn btn-primary  {% if status_proses %} active {% endif %}" type="submit" value="Proses" onclick="sync('Proses')">
+                  <input class="btn btn-primary  {% if status_tunda %} active {% endif %}" type="submit" value="Tunda"  onclick="sync('Tunda')">
+                  <input class="btn btn-primary  {% if status_batal %} active {% endif %}" type="submit" value="Batal" onclick="sync('Batal')">
+                  <input class="btn btn-primary  {% if status_selesai %} active {% endif %}" type="submit" value="Oke" onclick="sync('Selesai')">
+                </div>
+              </div> <!-- /toolbar -->
+			</td>
+		</tr>
+		
+
+	
+	</table>
+	</div>
+</div>
+</div>
+							<input type="hidden" id="noid_tin" name="noid_tin" value="{{ noid_tin }}">
+							<input type="hidden" id="status" name="status" value="">
+							<script>
+									function sync(nilai) {
+									           document.getElementById('status').value = nilai;
+									       }
+									    
+							</script>
+	
+<div class="row demo_row">
+				<div class="pull-left">
+             
+            </div>
+</div>
+</form>
+	{% endblock %}
+</body>
+</html>

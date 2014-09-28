@@ -1,0 +1,21 @@
+.dragbox {
+    float:left;
+    position:absolute;
+    background: #214262 !important;
+    color:#FFFFFF;
+    border-radius:5px;
+    padding:5px;
+  }
+ 
+.dropbox_text {
+    padding-top:-20px;
+}
+
+.dropbox {
+	float:left;
+    border-radius:7px;
+	width:30%;
+	height:300px;
+	background: #D2DBF4;
+	margin:10px 10px 10px 10px;
+}
