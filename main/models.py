@@ -20,7 +20,7 @@ class Hardware(models.Model):
 	tahun = models.IntegerField()
 	keterangan = models.CharField(max_length=500)
 	time_create = models.CharField(max_length=50)
-	
+
 
 class Tindakan(models.Model):
 	noid_tin = models.AutoField(primary_key=True)
@@ -38,5 +38,17 @@ class Perubahan(models.Model):
 	noid_hw = models.ForeignKey(Hardware)
 	perubahan = models.CharField(max_length=200)
 
+class Kanban(models.Model):
+    noid_kanban = models.AutoField(primary_key=True)
+    noid_tin = models.ForeignKey(Tindakan)
+    slot = models.CharField(max_length=10)
+    urut = models.CharField(max_length=10)
+    owner = models.CharField(max_length=50)
 
-
+    def as_json(self):
+        return dict(
+            noid_kanban = self.noid_kanban,
+            noid_tin = self.noid_tin,
+            slot = self.slot,
+            urut = self.urut,
+            owner = self.owner)

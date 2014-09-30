@@ -16,6 +16,6 @@ urlpatterns = patterns('',
 	url(r'^perangkat_update/', views.perangkat_update, name='perangkat_update'),
 	url(r'^tindakan_detail/', views.tindakan_detail, name='tindakan_detail'),
 	url(r'^tindakan_status/', views.tindakan_status, name='tindakan_status'),
-	
-	
+	url(r'^gtd_get_json/', views.gtd_get_json, name='gtd_get_json'),
+
 		)

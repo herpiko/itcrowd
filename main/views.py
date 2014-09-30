@@ -78,12 +78,34 @@ def index(request):
         tindakan_list = Tindakan.objects.filter(status='Proses')
         for x in tindakan_list:
             x.short_title = x.masalah
-        context_dict = {'tindakan_list' : tindakan_list}
+        from main.models import Kanban
+        gtd_data = Kanban.objects.all()
+        import jsonpickle, json
+        i=0
+        gtd_array = {}
+        for y in gtd_data:
+            gtd_array[i]= {}
+            gtd_array[i]['noid_tin'] = y.noid_tin.noid_tin
+            gtd_array[i]['noid_kanban'] = y.noid_kanban
+            gtd_array[i]['urut'] = y.urut
+            gtd_array[i]['owner'] = y.owner
+            i=i+1
+        gtd = json.dumps(gtd_array)
+
+        context_dict = {'tindakan_list' : tindakan_list, 'gtd' : gtd}
 
         return render_to_response('main/kanban.html', context_dict, context)
     else :
-        return HttpResponse('')
+        return HttpResponseRedirect("/main/login")
 
+def gtd_get_json(request):
+    if request.user.is_authenticated():
+        context=RequestContext(request)
+        from main.models import Kanban
+        data = Kanban.objects.all()
+        from django.core import serializers
+        gtd_data = serializers.serialize('json', data)
+        return HttpResponse(gtd_data, mimetype="application/json")
 def tindakan(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
@@ -101,14 +123,14 @@ def tindakan(request):
             noid_hw_split=noid_hw.split(" |")
             noid_hw=noid_hw_split[0]
 
-
-            from main.models import Hardware, User, Tindakan, Lokasi, Kathw
+            from main.models import Hardware, User, Tindakan, Lokasi, Kathw, Kanban
             username=request.user.get_username()
             noid_perangkat=Hardware.objects.get(noid_hw=noid_hw)
             username=User.objects.get(username=username)
             Tindakan.objects.get_or_create(masalah=masalah, penyelesaian=penyelesaian, tanggal_buka=tanggal_buka, jenis_tindakan=jenis_tindakan, status=status, noid_hw=noid_perangkat, username=username, time_create=time_create)
-
-            return HttpResponseRedirect("/main/")
+            tin = Tindakan.objects.get(masalah=masalah, penyelesaian=penyelesaian, tanggal_buka=tanggal_buka, jenis_tindakan=jenis_tindakan, status=status, noid_hw=noid_perangkat, username=username, time_create=time_create)
+            Kanban.objects.get_or_create(noid_tin=tin, slot='todo', urut=0, owner='piko')
+            return HttpResponseRedirect("/main/tindakan")
         else:
 
             context = RequestContext(request)
@@ -160,7 +182,7 @@ def hapus_tindakan(request):
         noid_tin = request.GET['hapus']
         from main.models import Hardware,Tindakan, Lokasi, Kathw, User
         Tindakan.objects.filter(noid_tin=noid_tin).delete()
-        return HttpResponseRedirect("/main/")
+        return HttpResponseRedirect("/main/tindakan")
     else :
         return HttpResponseRedirect("/main/login")
 
@@ -195,7 +217,7 @@ def tindakan_status(request):
         url = ['/main/tindakan_detail/?id=',noid_tin]
         back = ''.join(url)
 
-        return HttpResponseRedirect("/main/")
+        return HttpResponseRedirect("/main/tindakan/")
     else :
         return HttpResponseRedirect("/main/login")
 
