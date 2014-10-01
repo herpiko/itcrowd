@@ -98,6 +98,23 @@
     <script src="{% static 'js/jquery-ui.js' %}"></script>
     
 	<script>
+// Token untuk XSS
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+             }
+        }
+        return cookieValue;
+    }
 
         // inisialisasi koordinat
             
@@ -323,11 +340,15 @@
                             kanban_obj[index[i]].fields.slot = 'todo';
                         }
                     }
-                    
                     todo_c_tinggi = todo_c_tinggi + tingginya +20;
                     todo_count = todo_count +1;
                     $("#todo_coordinate").text(todo_count);  
                     $("#todo").height(todo_c_tinggi - todo_c_top - 5);
+                    // Ajax update 
+                    $.ajax({
+                        type: "GET",
+                        url : "/main/gtd_post_kanban_update/?idnya=" + searchkey + "&slot=todo"
+                    });
                     } 
 
                 if(ui.draggable.position().top > doing_c_top && (ui.draggable.position().left+(ui.draggable.width()/2)) > doing_c_left &&  (ui.draggable.position().left+(ui.draggable.width()/2)) < done_c_left ){
@@ -349,6 +370,12 @@
                     doing_count = doing_count + 1;
                     $("#doing_coordinate").text(doing_count);  
                     $("#doing").height(doing_c_tinggi - doing_c_top - 5);
+                    // Ajax update 
+                    $.ajax({
+                        type: "GET",
+                        url : "/main/gtd_post_kanban_update/?idnya=" + searchkey + "&slot=doing"
+                    });
+                    
                     } 
 
                 if(ui.draggable.position().top > done_c_top && (ui.draggable.position().left+(ui.draggable.width()/2)) > done_c_left){
@@ -370,6 +397,11 @@
                     done_count = done_count + 1;
                     $("#done_coordinate").text(done_count);  
                     $("#done").height(done_c_tinggi - done_c_top - 5);
+                    // Ajax update 
+                    $.ajax({
+                        type: "GET",
+                        url : "/main/gtd_post_kanban_update/?idnya=" + searchkey + "&slot=done"
+                    });
                     } 
             }  
 

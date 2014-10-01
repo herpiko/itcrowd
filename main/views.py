@@ -106,6 +106,19 @@ def gtd_get_json(request):
         from django.core import serializers
         gtd_data = serializers.serialize('json', data)
         return HttpResponse(gtd_data, mimetype="application/json")
+
+def gtd_post_kanban_update(request):
+        if request.user.is_authenticated():
+            context=RequestContext(request)
+            from main.models import Kanban
+            if request.method == 'GET':
+                idnya = request.GET['idnya']
+                slot = request.GET['slot']
+                item = Kanban.objects.filter(noid_tin = idnya).get()
+                item.slot = slot
+                item.save()
+                return HttpResponse('OK')
+
 def tindakan(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
