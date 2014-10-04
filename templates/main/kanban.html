@@ -10,15 +10,19 @@
 <body>
 	{% block button_block %}
 
-	<h4 class="">Get Things Done</h4>
-    <div id="testingtext"> </div> 
+	
+    
+    <table width="100%"><tr>
+        <td><h4 class="">Get Things Done</h4></td>
+        <td><div  style="float:right" id="testingtext"> </div></td>
+    </tr></table> 
 <div>
-        <div class="dropbox" id="todo"><div class="dropbox_text"><strong>To Do : </strong><span id="todo_coordinate"></span></div></div>
-        <div class="dropbox" id="doing"><div class="dropbox_text"><strong>Doing : </strong><span id="doing_coordinate"></span></div></div>
-<div class="dropbox" id="done"><div class="dropbox_text"><strong>Done : </strong><span id="done_coordinate"></span></div></div>
+        <div class="dropbox" id="todo"><div class="dropbox_text"><h5>To Do (<span id="todo_coordinate"></span>)</h5></div></div>
+        <div class="dropbox" id="doing"><div class="dropbox_text"><h5>Doing (<span id="doing_coordinate"></span>)</h5></div></div>
+        <div class="dropbox" id="done"><div class="dropbox_text"><h5>Done (<span id="done_coordinate"></span>)</h5></div></div>
         {% for tindakan in tindakan_list %} 
             
-        <div class="dragbox" id="{{ tindakan.noid_tin }}">{{ tindakan.masalah }}</div>
+        <div class="dragbox" id="{{ tindakan.noid_tin }}">{{ tindakan.masalah }}<div class="dragbox_button"><a href="/main/tindakan_detail?id={{ tindakan.noid_tin }}"><span id="eye_{{tindakan.noid_tin}}" class="fui-eye"></span></a></div></div>
         {% endfor %}
 
  </div>

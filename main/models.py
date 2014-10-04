@@ -44,7 +44,7 @@ class Kanban(models.Model):
     slot = models.CharField(max_length=10)
     urut = models.CharField(max_length=10)
     owner = models.CharField(max_length=50)
-
+    archived = models.CharField(max_length=1)
     def as_json(self):
         return dict(
             noid_kanban = self.noid_kanban,

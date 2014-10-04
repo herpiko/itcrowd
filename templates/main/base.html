@@ -36,18 +36,10 @@
 		              	<li><a href="#">The IT Crowd</a></li>
 		                
 		                {% else %}
-		                <li><a href="/main"><span class="fui-checkbox-checked"></span> Get Things Done!</a></li>
-		                 <li class="dropdown">
-			                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fui-gear"></span> Pemeliharaan <b class="caret"></b></a>
-			                  <span class="dropdown-arrow"></span>
-			                  <ul class="dropdown-menu">
-			                    <li><a href="/main/tindakan">Aksi</a></li>
-			                    <li><a href="/main/perangkat">Perangkat</a></li>
-			                    <li class="divider"></li>
-			                    <li><a href="#">Pustaka data</a></li>
-			                  </ul>
-			                </li>           
-		                <li><a href="#"><span class="fui-new"></span> Catatan</a></li>
+                            
+		                <li><a href="/main"><span class="fui-checkbox-checked"></span> Post It</a></li>
+		                <li><a href="/main/tindakan"><span class="fui-new"></span> Tindakan</a></li>
+		                <li><a href="/main/perangkat"><span class="fui-gear"></span> Perangkat</a></li>
 		                <li><a href="#"><span class="fui-lock"></span> Akun</a></li>
 		         
 		                {% endif %}
@@ -116,7 +108,14 @@
         return cookieValue;
     }
 
-        // inisialisasi koordinat
+    $('.dragbox').hover(
+        function(){
+            var idnyadragbox = $(this).attr('id');
+            $('eye_' + idnyadragbox).show();
+        }
+    );
+    
+    // inisialisasi koordinat
             
             // kotaktodo
             todo_c_position=$("#todo").position();
@@ -161,9 +160,11 @@
         }});
 
                 // beri index key
+                var jumlah_kartu = 0
                 var index=[];
                 for (var x in kanban_obj){
                      index.push(x);
+                     jumlah_kartu += 1;
                 }
                 
                 // urutin
@@ -171,17 +172,6 @@
                     return a == b ? 0 : ( a > b ? 1 : -1);
                 });
        
-                //cari objek untuk id 112 
-                var searchresult;
-                var searchkey = 112;
-                for(var i = 0; i < kanban_obj.length; i += 1){
-                    z = kanban_obj[index[i]];
-                    if( z.fields.noid_tin == searchkey){
-                    searchresult = z.fields;
-                    }
-                }
-                
-                    //$("#testingtext").text(searchresult.noid_tin + '' + searchresult.slot);             
 
 
             // Urutin kartu dalam todo
@@ -242,17 +232,15 @@
             // fungsi yang berjalan ketika objek mulai diangkat
 
             start:function(evt,ui){ 
-                $(this).addClass = ' flying'; 
+                $(this).classname = 'draggable flying'; 
                 var searchresult;
                 var searchkey = $(this).attr('id');
-                for(var i = 0; i < 3; i += 1){
+                for(var i = 0; i < jumlah_kartu; i += 1){
                     if( kanban_obj[index[i]].fields.noid_tin == searchkey){
                     kanban_obj[index[i]].fields.slot += '-flying';
                     searchresult = kanban_obj[index[i]].fields;
                     }
                 }
-
-
 
                 // pengurangan koordinat tinggi setiap objek diangkat
                 if(searchresult.slot == 'todo-flying'){
@@ -334,7 +322,7 @@
                     // cari objek untuk penetapan variabel slot yang baru
                     var searchresult;
                     var searchkey = ui.draggable.attr('id');
-                    for(var i = 0; i < 3; i += 1){
+                    for(var i = 0; i < jumlah_kartu; i += 1){
                         kanban_obj[index[i]];
                         if(kanban_obj[index[i]].fields.noid_tin == searchkey){
                             kanban_obj[index[i]].fields.slot = 'todo';
@@ -347,7 +335,10 @@
                     // Ajax update 
                     $.ajax({
                         type: "GET",
-                        url : "/main/gtd_post_kanban_update/?idnya=" + searchkey + "&slot=todo"
+                        url : "/main/gtd_post_kanban_update/?idnya=" + searchkey + "&slot=todo",
+                        success : function(){
+                            $("#testingtext").text("Tersimpan");
+                        }
                     });
                     } 
 
@@ -360,7 +351,7 @@
                     // cari objek untuk penetapan variabel slot yang baru
                     var searchresult;
                     var searchkey = ui.draggable.attr('id');
-                    for(var i = 0; i < 3; i += 1){
+                    for(var i = 0; i < jumlah_kartu; i += 1){
                         kanban_obj[index[i]];
                         if(kanban_obj[index[i]].fields.noid_tin == searchkey){
                             kanban_obj[index[i]].fields.slot = 'doing';
@@ -387,7 +378,7 @@
                     // cari objek untuk penetapan variabel slot yang baru
                     var searchresult;
                     var searchkey = ui.draggable.attr('id');
-                    for(var i = 0; i < 3; i += 1){
+                    for(var i = 0; i < jumlah_kartu; i += 1){
                         kanban_obj[index[i]];
                         if(kanban_obj[index[i]].fields.noid_tin == searchkey){
                             kanban_obj[index[i]].fields.slot = 'done';

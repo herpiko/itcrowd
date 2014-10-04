@@ -18,5 +18,5 @@ urlpatterns = patterns('',
 	url(r'^tindakan_status/', views.tindakan_status, name='tindakan_status'),
 	url(r'^gtd_get_json/', views.gtd_get_json, name='gtd_get_json'),
 	url(r'^gtd_post_kanban_update/', views.gtd_post_kanban_update, name='gtd_post_kanban_update'),
-
+#	url(r'^gtd_get_kanban_update/', views.gtd_get_kanban_update, name='gtd_get_kanban_update'),
 		)

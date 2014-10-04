@@ -1,4 +1,4 @@
-# Create your views here.
+# controller utama
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
@@ -75,6 +75,7 @@ def index(request):
     if request.user.is_authenticated():
         context=RequestContext(request)
         from main.models import Hardware, User, Tindakan, Lokasi, Kathw
+        current_user = request.user.get_username()
         tindakan_list = Tindakan.objects.filter(status='Proses')
         for x in tindakan_list:
             x.short_title = x.masalah
@@ -92,7 +93,7 @@ def index(request):
             i=i+1
         gtd = json.dumps(gtd_array)
 
-        context_dict = {'tindakan_list' : tindakan_list, 'gtd' : gtd}
+        context_dict = {'tindakan_list' : tindakan_list, 'gtd' : gtd, 'current_user' : current_user}
 
         return render_to_response('main/kanban.html', context_dict, context)
     else :
@@ -102,7 +103,7 @@ def gtd_get_json(request):
     if request.user.is_authenticated():
         context=RequestContext(request)
         from main.models import Kanban
-        data = Kanban.objects.all()
+        data = Kanban.objects.filter(archived='0')
         from django.core import serializers
         gtd_data = serializers.serialize('json', data)
         return HttpResponse(gtd_data, mimetype="application/json")
@@ -110,14 +111,35 @@ def gtd_get_json(request):
 def gtd_post_kanban_update(request):
         if request.user.is_authenticated():
             context=RequestContext(request)
-            from main.models import Kanban
+            from main.models import Kanban, Tindakan
             if request.method == 'GET':
-                idnya = request.GET['idnya']
-                slot = request.GET['slot']
-                item = Kanban.objects.filter(noid_tin = idnya).get()
-                item.slot = slot
-                item.save()
-                return HttpResponse('OK')
+                if request.GET['slot'] == 'done':
+                    idnya = request.GET['idnya']
+                    slot = request.GET['slot']
+                    item = Kanban.objects.filter(noid_tin = idnya).get()
+                    item.slot = slot
+                    item.archived = '1'
+                    item.delete()
+                    item.save()
+
+                    tindakan = Tindakan.objects.filter(noid_tin = idnya).get()
+                    tindakan.status = 'Selesai'
+                    tindakan.save()
+
+                    return HttpResponse('OK')
+                else :
+                    idnya = request.GET['idnya']
+                    slot = request.GET['slot']
+                    item = Kanban.objects.filter(noid_tin = idnya).get()
+                    item.slot = slot
+                    item.archived = '0'
+                    item.save()
+
+                    tindakan = Tindakan.objects.filter(noid_tin = idnya).get()
+                    tindakan.status = 'Proses'
+                    tindakan.save()
+                    return HttpResponse('OK')
+
 
 def tindakan(request):
     if request.user.is_authenticated():
@@ -142,7 +164,7 @@ def tindakan(request):
             username=User.objects.get(username=username)
             Tindakan.objects.get_or_create(masalah=masalah, penyelesaian=penyelesaian, tanggal_buka=tanggal_buka, jenis_tindakan=jenis_tindakan, status=status, noid_hw=noid_perangkat, username=username, time_create=time_create)
             tin = Tindakan.objects.get(masalah=masalah, penyelesaian=penyelesaian, tanggal_buka=tanggal_buka, jenis_tindakan=jenis_tindakan, status=status, noid_hw=noid_perangkat, username=username, time_create=time_create)
-            Kanban.objects.get_or_create(noid_tin=tin, slot='todo', urut=0, owner='piko')
+            Kanban.objects.get_or_create(noid_tin=tin, slot='todo', urut=0, owner='piko', archived='0')
             return HttpResponseRedirect("/main/tindakan")
         else:
 
