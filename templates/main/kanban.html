@@ -17,15 +17,129 @@
         <td><div  style="float:right" id="testingtext"> </div></td>
     </tr></table> 
 <div>
-        <div class="dropbox" id="todo"><div class="dropbox_text"><h5>To Do (<span id="todo_coordinate"></span>)</h5></div></div>
+        <div class="dropbox" id="todo"><div class="dropbox_text"><h5>To Do (<span id="todo_coordinate"></span>)</h5></div>
+         <div>
+            <a href="#tindakan_modal" data-toggle="modal"><span id="add_button" class="fui-plus"></span></a>
+         </div>
+        </div>
         <div class="dropbox" id="doing"><div class="dropbox_text"><h5>Doing (<span id="doing_coordinate"></span>)</h5></div></div>
         <div class="dropbox" id="done"><div class="dropbox_text"><h5>Done (<span id="done_coordinate"></span>)</h5></div></div>
-        {% for tindakan in tindakan_list %} 
+        {% for tindakan in tindakan_list_proses %} 
             
-        <div class="dragbox" id="{{ tindakan.noid_tin }}">{{ tindakan.masalah }}<div class="dragbox_button"><a href="/main/tindakan_detail?id={{ tindakan.noid_tin }}"><span id="eye_{{tindakan.noid_tin}}" class="fui-eye"></span></a></div></div>
+        <div class="dragbox" id="{{ tindakan.noid_tin }}">
+                <span class="hint--top" data-hint="{{ tindakan.noid_hw.merek }} - {{ tindakan.noid_hw.tipe }} _ {{ tindakan.noid_hw.username.first_name }} @ {{ tindakan.noid_hw.lokasi.lokasi }}">
+        {{ tindakan.masalah }}
+        </span>
+        <div class="dragbox_button"><a href="/main/tindakan_detail?id={{ tindakan.noid_tin }}"><span id="eye_{{tindakan.noid_tin}}"><span class="fui-gear"></span></span></a></div></div>
         {% endfor %}
 
  </div>
+
+		<div class="modal fade" id="tindakan_modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+		    <div class="modal-dialog">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		            
+		            <h4 class="modal-title" id="myModalLabel">Tindakan pemeliharaan baru</h4>
+		            </div>
+		            <div class="modal-body">
+		                <form class="form form-horizontal" name="tindakan_baru" method="post" action="/main/tindakan/">
+		                	{% csrf_token %}
+		                	<div class="form-group">
+		                		<input id="noid_hw" type="hidden" name="noid_hw">
+		                		<label class="control-label col-sm-3">Nama Perangkat</label>
+		                		<div class="col-sm-9">
+		                			
+									<div id="perangkat_search" ></div>
+		                			
+
+		                			<!-- <div id="search_bar"></div> -->
+								<script src="{% static 'js/jquery-1.8.3.min.js' %}"></script>
+								<script src="{% static 'autocomplete/autocomplete-0.3.0.js' %}"></script>
+								<script>
+									var config = {
+									  maxTokenGroups: 1,
+									  placeholderHTML: 'Cari...',
+									  lists: {
+									    fruits: [
+
+									    {% for perangkat in perangkat_list %}
+							            '{{ perangkat.noid_hw }} | {{ perangkat.kathw.kathw }} / {{ perangkat.merek }}-{{ perangkat.tipe }} / {{ perangkat.lokasi.lokasi }} / {{ perangkat.username.first_name }}',
+							            {% endfor %}
+
+									    ]
+									  }
+									};
+									var widget = new AutoComplete('perangkat_search', config);
+									
+									var nilai= document.getElementById('perangkat_search').find('.token-75233').innerHTML;
+									
+									function sync(matchClass) {
+									    var elems = document.getElementsByTagName('*'), i;
+									    for (i in elems) {
+									        if((' ' + elems[i].className + ' ').indexOf(' ' + matchClass + ' ')
+									                > -1) {
+									           document.getElementById('noid_hw').value = elems[i].innerHTML;
+									        }
+									    }
+									}
+
+									
+									</script>
+
+		                			
+		                		<!-- <select name="noid_hw" value="" class="form-control input-x-large" width="100%">
+
+							            {% for perangkat in perangkat_list %}
+							            <option value="{{ perangkat.noid_hw }}">{{ perangkat.merek }} - {{ perangkat.tipe }} / {{ perangkat.lokasi.lokasi }}</option>
+							            {% endfor %}
+							           	            
+							          </select> -->
+		                		</div>
+		                	</div>	
+		                	<div class="form-group">
+		                		<label class="control-label col-sm-3">Tanggal</label>
+		                		<div class="col-sm-9">
+		                		<input type="text" id="datepicker" class="form-control" name="tanggal_buka" placeholder="Tanggal" value="">
+
+		                		</div>
+		                	</div>	
+		                	<div class="form-group">
+		                		<label class="control-label col-sm-3">Tiket</label>
+		                		<div class="col-sm-9">
+		                		<textarea type="text" class="form-control" name="masalah" placeholder="Masalah / Tugas" value=""></textarea>
+		                		</div>
+		                	</div>	
+		                	<div class="form-group">
+		                		<label class="control-label col-sm-3">Penyelesaian</label>
+		                		<div class="col-sm-9">
+		                		<textarea type="text" class="form-control" name="penyelesaian" placeholder="Rencana Penyelesaian / Solusi" value=""></textarea>
+		                		</div>
+		                	</div>	
+		                	<div class="form-group">
+		                		<label class="control-label col-sm-3">Jenis tindakan</label>
+		                		<div class="col-sm-9">
+		                			<select name="jenis_tindakan" value="" class="form-control input-x-large" width="100%">
+							            <option value="" selected disabled>---</option>
+							            <option value="Hardware">Hardware</option>
+							            <option value="Software">Software</option>
+							            <option value="Jaringan">Jaringan</option>
+							            <option value="Mutasi lokasi">Mutasi lokasi</option>
+							            <option value="Lainnya">Lainnya</option>		            
+							          </select>
+		                		</div>
+		                	</div>	
+		            </div>
+		            <div class="modal-footer">
+		            	<input type="hidden" name="status" value="Proses">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+		                <button type="button input" class="btn btn-primary" onclick="sync('token-75233')">Simpan</button>
+		                </form>
+		        </div>
+		    </div>
+		  </div>
+		</div>
+
 	{% endblock %}
 </body>
 </html>

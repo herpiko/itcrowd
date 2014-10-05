@@ -9,8 +9,9 @@
     <!-- Loading Flat UI -->
     <link href="{% static 'css/flat-ui.css' %}" rel="stylesheet">
 
-    <link href="{% static 'css/jquery-ui.css' %}" rel="stylesheet">
 
+    <link href="{% static 'css/jquery-ui.css' %}" rel="stylesheet">
+    <link href="{% static 'css/hint.css' %}" rel="stylesheet">
     <link href="{% static 'css/drag.css' %}" rel="stylesheet">
     <link href="{% static 'autocomplete/autocomplete-0.3.0.css' %}" rel="stylesheet">
 
@@ -90,6 +91,17 @@
     <script src="{% static 'js/jquery-ui.js' %}"></script>
     
 	<script>
+    
+
+
+	$(document).ready(function(){
+	 $(function() {
+		$( "#datepicker" ).datepicker({ dateFormat : "dd/mm/yy"});
+	        
+
+        });
+    });
+
 // Token untuk XSS
 
     function getCookie(name) {
@@ -139,18 +151,17 @@
 			margindropbox = (lebar-lebardragbox)/2;
     
             // variable utama
-            var penjarak = 50;
+            var penjarak = 60;
             var todo_count = 0;
             var doing_count = 0;
             var done_count = 0;
             var todo_c_tinggi = todo_c_top + penjarak; 
             var doing_c_tinggi = doing_c_top + penjarak; 
             var done_c_tinggi = done_c_top + penjarak; 
-//	$(document).ready(function(){
 
         $(".dragbox").fadeIn('slow');
         lebar = $('.dropbox').width();
-		lebardragbox = (90/100)*lebar;
+		lebardragbox = (100/100)*lebar;
 		$('.dragbox').width(lebardragbox);
         
     
@@ -173,7 +184,7 @@
                 });
        
 
-
+        function urutkan_kartu(){
             // Urutin kartu dalam todo
             for (y in kanban_obj){
                 if (kanban_obj[y].fields.slot == 'todo'){
@@ -187,7 +198,11 @@
                 todo_count = todo_count +1;
                 $("#todo_coordinate").text(todo_count);  
                 }
-                $("#todo").height(todo_c_tinggi - todo_c_top - 5);
+                if ((todo_c_tinggi - todo_c_top - 5)<100){
+                    $("#todo").height(300);
+                } else {
+                    $("#todo").height(todo_c_tinggi - todo_c_top - 5);
+                }
             }
             // Urutin kartu dalam doing
             for (y in kanban_obj){
@@ -202,7 +217,11 @@
                 doing_count = doing_count + 1;
                 $("#doing_coordinate").text(doing_count);  
                 }
-                $("#doing").height(doing_c_tinggi - doing_c_top - 5);
+                if ((doing_c_tinggi - doing_c_top - 5)<100){
+                    $("#doing").height(300);
+                } else {
+                    $("#doing").height(doing_c_tinggi - doing_c_top - 5);
+                }
             }
             // Urutin kartu dalam done
             for (y in kanban_obj){
@@ -217,15 +236,25 @@
                 done_count = done_count + 1;
                 $("#done_coordinate").text(done_count);  
                 }
-                $("#done").height(done_c_tinggi - done_c_top - 5);
+                if ((done_c_tinggi - done_c_top - 5)<100){
+                    $("#done").height(300);
+                } else {
+                    $("#done").height(done_c_tinggi - done_c_top - 5);
+                }
             }
+        }
 
+        urutkan_kartu();
 //    }); // document ready end
 
-	 $(function() {
-		$( "#datepicker" ).datepicker({ dateFormat : "dd/mm/yy"});
-	        
-        });
+    function tersimpan(){
+            $('#testingtext').text('Tersimpan...');
+        $('#testingtext').slideDown(function(){
+            setTimeout(function(){
+                $('#testingtext').fadeOut();},1000)
+
+            });
+        }
 	
     $(".dragbox").draggable({
            
@@ -296,11 +325,13 @@
                 $("#done").height(done_c_tinggi - done_c_top - 5);
                 }
             }
+               
                 } 
                 
                 },       
                 });
-	$(".dropbox").droppable({
+
+$(".dropbox").droppable({
 		 tolerance: 'intersect',
 		    drop: function(event, ui) {
 		    	lebar = $('.dropbox').width();
@@ -337,9 +368,10 @@
                         type: "GET",
                         url : "/main/gtd_post_kanban_update/?idnya=" + searchkey + "&slot=todo",
                         success : function(){
-                            $("#testingtext").text("Tersimpan");
+                            tersimpan();
                         }
                     });
+                    $("#eye_" + searchkey).html("<span class='fui-gear'></span>");
                     } 
 
                 if(ui.draggable.position().top > doing_c_top && (ui.draggable.position().left+(ui.draggable.width()/2)) > doing_c_left &&  (ui.draggable.position().left+(ui.draggable.width()/2)) < done_c_left ){
@@ -364,9 +396,13 @@
                     // Ajax update 
                     $.ajax({
                         type: "GET",
-                        url : "/main/gtd_post_kanban_update/?idnya=" + searchkey + "&slot=doing"
-                    });
+                        url : "/main/gtd_post_kanban_update/?idnya=" + searchkey + "&slot=doing",
+                        success : function(){
+                            tersimpan();
+                        }
+                        });
                     
+                    $("#eye_" + searchkey).html("<span class='fui-gear'></span>");
                     } 
 
                 if(ui.draggable.position().top > done_c_top && (ui.draggable.position().left+(ui.draggable.width()/2)) > done_c_left){
@@ -391,8 +427,13 @@
                     // Ajax update 
                     $.ajax({
                         type: "GET",
-                        url : "/main/gtd_post_kanban_update/?idnya=" + searchkey + "&slot=done"
+                        url : "/main/gtd_post_kanban_update/?idnya=" + searchkey + "&slot=done",
+                        success : function(){
+                            tersimpan();
+                        }
                     });
+                    $("#eye_" + searchkey).html("<span class='fui-check'></span>");
+                    
                     } 
             }  
 

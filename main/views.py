@@ -75,9 +75,8 @@ def index(request):
     if request.user.is_authenticated():
         context=RequestContext(request)
         from main.models import Hardware, User, Tindakan, Lokasi, Kathw
-        current_user = request.user.get_username()
-        tindakan_list = Tindakan.objects.filter(status='Proses')
-        for x in tindakan_list:
+        tindakan_list_proses = Tindakan.objects.filter(status='Proses')
+        for x in tindakan_list_proses:
             x.short_title = x.masalah
         from main.models import Kanban
         gtd_data = Kanban.objects.all()
@@ -93,7 +92,18 @@ def index(request):
             i=i+1
         gtd = json.dumps(gtd_array)
 
-        context_dict = {'tindakan_list' : tindakan_list, 'gtd' : gtd, 'current_user' : current_user}
+        tindakan_list = Tindakan.objects.all().select_related('Hardware').order_by('-tanggal_buka')
+        banyak = 0
+        for x in tindakan_list:
+            x.tanggal_buka = db2tanggal(x.tanggal_buka)
+            banyak = banyak + 1
+
+        perangkat_list = Hardware.objects.all()
+        kathw_list = Kathw.objects.all()
+        lokasi_list = Lokasi.objects.all()
+        user_list = User.objects.all()
+        current_user = request.user.get_username()
+        context_dict = {'tindakan_list_proses': tindakan_list_proses,'gtd' : gtd,'tindakan_list':tindakan_list, 'perangkat_list':perangkat_list,'kathw_list':kathw_list, 'lokasi_list':lokasi_list,'user_list':user_list,'current_user':current_user, 'banyak':banyak}
 
         return render_to_response('main/kanban.html', context_dict, context)
     else :
@@ -165,7 +175,7 @@ def tindakan(request):
             Tindakan.objects.get_or_create(masalah=masalah, penyelesaian=penyelesaian, tanggal_buka=tanggal_buka, jenis_tindakan=jenis_tindakan, status=status, noid_hw=noid_perangkat, username=username, time_create=time_create)
             tin = Tindakan.objects.get(masalah=masalah, penyelesaian=penyelesaian, tanggal_buka=tanggal_buka, jenis_tindakan=jenis_tindakan, status=status, noid_hw=noid_perangkat, username=username, time_create=time_create)
             Kanban.objects.get_or_create(noid_tin=tin, slot='todo', urut=0, owner='piko', archived='0')
-            return HttpResponseRedirect("/main/tindakan")
+            return HttpResponseRedirect("/main")
         else:
 
             context = RequestContext(request)
@@ -241,7 +251,7 @@ def tindakan_status(request):
         tanggal_tutup = request.POST['tanggal_tutup']
         tanggal_tutup = tgl2db(tanggal_tutup)
         penyelesaian = request.POST['penyelesaian']
-        from main.models import Hardware,Tindakan, Lokasi, Kathw, User
+        from main.models import Hardware,Tindakan, Lokasi, Kathw, User, Kanban
         tindakan = Tindakan.objects.filter(noid_tin=noid_tin).get()
         tindakan.status=status
         # tindakan.tanggal_buka=tanggal_buka
@@ -249,10 +259,27 @@ def tindakan_status(request):
         tindakan.masalah=masalah
         tindakan.penyelesaian=penyelesaian
         tindakan.save()
+        if status=='Proses':
+            if Kanban.objects.filter(noid_tin=noid_tin).exists():
+                kanban = Kanban.objects.filter(noid_tin=noid_tin).get()
+                kanban.slot = 'todo'
+                kanban.archived = '0'
+                kanban.save()
+            else :
+                Kanban.objects.get_or_create(noid_tin=tindakan, slot='todo', urut=0, owner='piko', archived='0')
+
+        if status=='Selesai':
+            if Kanban.objects.filter(noid_tin=noid_tin).exists():
+                kanban = Kanban.objects.filter(noid_tin=noid_tin).get()
+                kanban.slot = 'done'
+                kanban.archived = '1'
+                kanban.save()
+            else :
+                Kanban.objects.get_or_create(noid_tin=tindakan, slot='done', urut=0, owner='piko', archived='1')
         url = ['/main/tindakan_detail/?id=',noid_tin]
         back = ''.join(url)
 
-        return HttpResponseRedirect("/main/tindakan/")
+        return HttpResponseRedirect("/main")
     else :
         return HttpResponseRedirect("/main/login")
 
