@@ -10,27 +10,110 @@
 <body>
 	{% block button_block %}
 
+ <script>
+function show_editor(idnya, detail){
+        $("#kanban-editor").fadeOut(function(){
+            $("#ticket-editor").fadeIn();
+        });
+    
+    var json_by_id;
+
+    $.ajax({url:"/main/gtd_get_json_by_id/?idnya=" + idnya,
+        async:false, success:function(result){
+        var index=[]
+        for (var x in result){
+            index.push(x)
+        }
+        for (y in result){
+                $("#masalah").text(result[y].fields.masalah);
+                $("#perangkat").text(detail);
+                $("#ticket_id").text(idnya);
+         }
+
+
+        }
+    
+    });
+    
+    }
+function hide_editor(){
+        $("#ticket-editor").fadeOut(function(){
+        $("#kanban-editor").fadeIn();
+        });
+    
+    }
+ </script>
 	
     
     <table width="100%"><tr>
-        <td><h4 class="">Get Things Done</h4></td>
+        <td><h4 class="">Post It!</h4></td>
         <td><div  style="float:right" id="testingtext"> </div></td>
     </tr></table> 
-<div>
+
+    <div id="ticket-editor" style="width:600px;display:none" class="well">
+		                <form class="form form-horizontal" name="ticket_editor" method="post" action="/main/tindakan/">
+		                	{% csrf_token %}
+                            <div class="form-group">
+		                		<label class="control-label col-sm-3"></label>
+		                		<div class="col-sm-12">
+                                <div id="perangkat"></div>
+                                <br>
+                                <div id="masalah" class="well"></div>
+                                </div>
+		                	</div>	
+                            <div class="form-group">
+		                		<label class="control-label col-sm-3">Tutup tiket</label>
+		                		<div class="col-sm-5">
+		                		<input type="text" id="datepicker-ticket" class="form-control" name="tanggal_tutup" placeholder="Tanggal" value="">
+
+		                		</div>
+		                	</div>	
+		                	<div class="form-group">
+		                		<label class="control-label col-sm-3">Penyelesaian</label>
+		                		<div class="col-sm-9">
+		                		<textarea type="text" class="form-control" name="penyelesaian" placeholder="Rencana Penyelesaian / Solusi" value=""></textarea>
+		                		</div>
+                <div style="">
+                </div>
+        </div>	
+                        <input type="hidden" id="ticket_id" name="ticket_id" value="">
+		                <button type="button input"  style="margin-left:10px" class="pull-right btn btn-primary" onclick="save_editor()">Simpan</button>
+                        <button type="button" class="pull-right btn btn-default" onclick="hide_editor()">Batal</button>
+        <br><br>
+		                </form>
+    
+		            </div>
+
+                
+        <div id="kanban-editor">
         <div class="dropbox" id="todo"><div class="dropbox_text"><h5>To Do (<span id="todo_coordinate"></span>)</h5></div>
          <div>
-            <a href="#tindakan_modal" data-toggle="modal"><span id="add_button" class="fui-plus"></span></a>
+            <a href="#tindakan_modal" data-toggle="modal">
+                <span class="hint--top" data-hint="Buat tiket baru" id="add_button">
+                    <span  class="fui-plus"></span>
+                </span>
+            </a>
          </div>
         </div>
         <div class="dropbox" id="doing"><div class="dropbox_text"><h5>Doing (<span id="doing_coordinate"></span>)</h5></div></div>
-        <div class="dropbox" id="done"><div class="dropbox_text"><h5>Done (<span id="done_coordinate"></span>)</h5></div></div>
+        <div class="dropbox" id="done"><div class="dropbox_text"><h5>Done (<span id="done_coordinate"></span>)</h5></div>
+        
+         <div>
+            <a href="#" id="clear_button_act">
+                <span class="hint--top" data-hint="Hapus" id="clear_button">
+                    <span  class="fui-cross"></span>
+                </span>
+            </a>
+         </div>
+        </div>
+
         {% for tindakan in tindakan_list_proses %} 
             
         <div class="dragbox" id="{{ tindakan.noid_tin }}">
-                <span class="hint--top" data-hint="{{ tindakan.noid_hw.merek }} - {{ tindakan.noid_hw.tipe }} _ {{ tindakan.noid_hw.username.first_name }} @ {{ tindakan.noid_hw.lokasi.lokasi }}">
+                <span class="hint--top" data-hint="{{ tindakan.noid_hw.merek }} - {{ tindakan.noid_hw.tipe }} _ {{ tindakan.noid_hw.username.first_name }} _ {{ tindakan.noid_hw.lokasi.lokasi }}">
         {{ tindakan.masalah }}
         </span>
-        <div class="dragbox_button"><a href="/main/tindakan_detail?id={{ tindakan.noid_tin }}"><span id="eye_{{tindakan.noid_tin}}"><span class="fui-gear"></span></span></a></div></div>
+        <div class="dragbox_button"><a href="#" name="{{ tindakan.noid_tin }}" data-detail="{{ tindakan.noid_hw.merek }} - {{ tindakan.noid_hw.tipe }} _ {{ tindakan.noid_hw.username.first_name }} _ {{ tindakan.noid_hw.lokasi.lokasi }}" onclick="show_editor($(this).attr('name'), $(this).attr('data-detail'))"><span id="eye_{{tindakan.noid_tin}}"><span class="fui-gear"></span></span></a></div></div>
         {% endfor %}
 
  </div>

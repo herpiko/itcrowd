@@ -80,7 +80,7 @@ def index(request):
             x.short_title = x.masalah
         from main.models import Kanban
         gtd_data = Kanban.objects.all()
-        import jsonpickle, json
+        import json
         i=0
         gtd_array = {}
         for y in gtd_data:
@@ -118,6 +118,17 @@ def gtd_get_json(request):
         gtd_data = serializers.serialize('json', data)
         return HttpResponse(gtd_data, mimetype="application/json")
 
+def gtd_get_json_by_id(request):
+    if request.user.is_authenticated():
+        context=RequestContext(request)
+        idnya = request.GET['idnya']
+
+        from main.models import Kanban, Hardware, User, Tindakan, Lokasi, Kathw
+        data = Tindakan.objects.filter(noid_tin = idnya)
+        from django.core import serializers
+        gtd_data = serializers.serialize('json', data)
+        return HttpResponse(gtd_data, mimetype="application/json")
+
 def gtd_post_kanban_update(request):
         if request.user.is_authenticated():
             context=RequestContext(request)
@@ -150,6 +161,13 @@ def gtd_post_kanban_update(request):
                     tindakan.save()
                     return HttpResponse('OK')
 
+def tindakan_kanban_populate(request):
+
+    from main.models import Hardware, User, Tindakan, Lokasi, Kathw, Kanban
+    tin = Tindakan.objects.filter(status='Proses')
+    for x in tin:
+        Kanban.objects.get_or_create(noid_tin=x, slot='todo', urut=0, owner='piko', archived='0')
+    return HttpResponseRedirect("/main")
 
 def tindakan(request):
     if request.user.is_authenticated():
