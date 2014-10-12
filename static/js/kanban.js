@@ -149,7 +149,7 @@ $('#clear_button_act').click(function(){
 
     function tersimpan(){
             $('#testingtext').text('Tersimpan...');
-        $('#testingtext').slideDown(function(){
+            $('#testingtext').slideDown(function(){
             setTimeout(function(){
                 $('#testingtext').fadeOut(1000);},0)
 

@@ -19,5 +19,8 @@ urlpatterns = patterns('',
 	url(r'^gtd_get_json/', views.gtd_get_json, name='gtd_get_json'),
 	url(r'^gtd_get_json_by_id/', views.gtd_get_json_by_id, name='gtd_get_json_by_id'),
 	url(r'^gtd_post_kanban_update/', views.gtd_post_kanban_update, name='gtd_post_kanban_update'),
+	url(r'^gtd_get_json_ticket_owner_by_id/', views.gtd_get_json_ticket_owner_by_id, name='gtd_get_json_ticket_owner_by_id'),
+	url(r'^gtd_update_json_ticket_owner/', views.gtd_update_json_ticket_owner, name='gtd_update_json_ticket_owner'),
+	url(r'^gtd_update_json_ticket/', views.gtd_update_json_ticket, name='gtd_update_json_ticket'),
 	url(r'^tindakan_kanban_populate/', views.tindakan_kanban_populate, name='tindakan_kanban_populate'),
 		)

@@ -9,11 +9,15 @@
  </head>
 <body>
 	{% block button_block %}
-
+    <div id="outter_container">
+    <div id="inner_container">
  <script>
+var current_ticket_id;
 function show_editor(idnya, detail){
+        $("#ticket-editor").slideDown();
+        $(".dragbox").slideUp();
         $("#kanban-editor").fadeOut(function(){
-            $("#ticket-editor").fadeIn();
+        
         });
     
     var json_by_id;
@@ -26,22 +30,77 @@ function show_editor(idnya, detail){
         }
         for (y in result){
                 $("#masalah").text(result[y].fields.masalah);
+                $("#penyelesaian").val(result[y].fields.penyelesaian);
+                $("#datepicker-ticket").val(result[y].fields.tanggal_tutup);
                 $("#perangkat").text(detail);
                 $("#ticket_id").text(idnya);
+                $("#lebihlanjut").attr("href","/main/tindakan_detail/?id="+idnya);
+        $.ajax({
+url:"/main/gtd_get_json_ticket_owner_by_id/?idnya="+result[y].fields.username,
+            async:false,
+            success:function(result){
+                $("#ambil_alih").text("Pemegang tiket : "+result);
+                $("#ticket_owner").val(result);
+                current_ticket_id = idnya
+            }
+            });
          }
-
-
         }
-    
     });
     
     }
 function hide_editor(){
-        $("#ticket-editor").fadeOut(function(){
-        $("#kanban-editor").fadeIn();
+        $("#kanban-editor").slideDown(function(){
+                        
+        $(".dragbox").slideDown();
+                        });
+        $("#ticket-editor").slideUp(function(){
+        $("#datepicker-ticket").val("");
+        $("#penyelesaian").val("");
         });
-    
     }
+function ambil_alih_tiket(){
+        $("#ambil_alih").text("Pemegang tiket : {{current_user}}");
+        $("#ticket_owner").attr("value","{{current_user}}");
+        } 
+
+function simpan(){
+
+    $.ajax({
+        type:"POST",
+        url:"/main/gtd_update_json_ticket/",
+        data: {
+            tutup_tiket : $("#datepicker-ticket").val(), 
+            penyelesaian : $("#penyelesaian").val(),
+            owner : $("#ticket_owner").val(),
+            noid_tin : current_ticket_id,
+            csrfmiddlewaretoken:'{{csrf_token}}'            
+        },
+        success:function(result){
+            hide_editor();
+            setTimeout(function(){
+                $('#testingtext').text('Tersimpan...');
+                $('#testingtext').slideDown(function(){
+                    setTimeout(function(){
+                        $('#testingtext').fadeOut(1000);
+                    },0)
+                })
+            },1000);  
+        },
+        error:function(){
+            hide_editor();
+            setTimeout(function(){
+                $('#testingtext').text('Gagal menyimpan. Periksa koneksi jaringan anda.');
+                $('#testingtext').slideDown(function(){
+                    setTimeout(function(){
+                        $('#testingtext').fadeOut(1000);
+                    },3000)
+                })
+            },1000);  
+        }
+                    
+    });
+}
  </script>
 	
     
@@ -69,16 +128,19 @@ function hide_editor(){
 		                		</div>
 		                	</div>	
 		                	<div class="form-group">
-		                		<label class="control-label col-sm-3">Penyelesaian</label>
+		                		<label class="control-label col-sm-3">Penyelesaian/solusi</label>
 		                		<div class="col-sm-9">
-		                		<textarea type="text" class="form-control" name="penyelesaian" placeholder="Rencana Penyelesaian / Solusi" value=""></textarea>
+		                		<textarea id="penyelesaian" type="text" class="form-control" name="penyelesaian" placeholder="Rencana Penyelesaian / Solusi" value=""></textarea>
 		                		</div>
                 <div style="">
                 </div>
         </div>	
-                        <input type="hidden" id="ticket_id" name="ticket_id" value="">
-		                <button type="button input"  style="margin-left:10px" class="pull-right btn btn-primary" onclick="save_editor()">Simpan</button>
-                        <button type="button" class="pull-right btn btn-default" onclick="hide_editor()">Batal</button>
+    <input type="hidden" id="ticket_id" name="ticket_id" value="">
+    <input type="hidden" id="ticket_owner" name="ticket_owner" value="">
+    <button type="button" style="margin-left:10px" class="pull-right btn btn-warning" onclick="hide_editor()"><span class="fui-list"></span></button>
+	<button type="button"  style="margin-left:10px" class="pull-right btn btn-primary" onclick="simpan()">Simpan</button>
+    <a id="lebihlanjut" href=""><button type="button" class="pull-right btn btn-default" >Lebih lanjut</button></a>
+    <button type="button" class="hint--right pull-left btn btn-default" data-hint="Ambil alih..." id="ambil_alih" onclick="ambil_alih_tiket()"></button>
         <br><br>
 		                </form>
     
@@ -98,13 +160,13 @@ function hide_editor(){
         <div class="dropbox" id="doing"><div class="dropbox_text"><h5>Doing (<span id="doing_coordinate"></span>)</h5></div></div>
         <div class="dropbox" id="done"><div class="dropbox_text"><h5>Done (<span id="done_coordinate"></span>)</h5></div>
         
-         <div>
+        <!-- <div>
             <a href="#" id="clear_button_act">
-                <span class="hint--top" data-hint="Hapus" id="clear_button">
+                <span class="hint-top" data-hint="Hapus" id="clear_button">
                     <span  class="fui-cross"></span>
                 </span>
             </a>
-         </div>
+         </div>-->
         </div>
 
         {% for tindakan in tindakan_list_proses %} 
@@ -222,7 +284,8 @@ function hide_editor(){
 		    </div>
 		  </div>
 		</div>
-
+</div>
+</div>
 	{% endblock %}
 </body>
 </html>

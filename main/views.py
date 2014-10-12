@@ -128,6 +128,42 @@ def gtd_get_json_by_id(request):
         from django.core import serializers
         gtd_data = serializers.serialize('json', data)
         return HttpResponse(gtd_data, mimetype="application/json")
+def gtd_get_json_ticket_owner_by_id(request):
+    if request.user.is_authenticated():
+        context=RequestContext(request)
+        idnya = request.GET['idnya']
+        from main.models import User
+        user = User.objects.filter(id=idnya);
+        return HttpResponse(user)
+
+def gtd_update_json_ticket_owner(request):
+    if request.user.is_authenticated():
+        context=RequestContext(request)
+        noid_tin = request.GET['noid_tin']
+        current_user = request.GET['current_user']
+        from main.models import Kanban, Hardware, User, Tindakan, Lokasi, Kathw
+        user = User.objects.filter(username=current_user).get()
+        data = Tindakan.objects.filter(noid_tin = noid_tin).get()
+        data.username = user
+        data.save()
+        return HttpResponse(user)
+
+def gtd_update_json_ticket(request):
+    if request.user.is_authenticated():
+        context=RequestContext(request)
+        tutup_tiket = request.POST["tutup_tiket"]
+        penyelesaian = request.POST["penyelesaian"]
+        owner = request.POST["owner"]
+        noid_tin = request.POST["noid_tin"]
+        from main.models import Tindakan, User
+
+        user = User.objects.filter(username = owner).get()
+        item = Tindakan.objects.filter(noid_tin = noid_tin).get()
+        item.penyelesaian = penyelesaian
+        item.tanggal_tutup = tutup_tiket
+        item.username = user
+        item.save()
+        return HttpResponse(penyelesaian)
 
 def gtd_post_kanban_update(request):
         if request.user.is_authenticated():
