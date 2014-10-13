@@ -155,6 +155,16 @@ $('#clear_button_act').click(function(){
 
             });
         }
+    function gagal(){
+        setTimeout(function(){
+            $('#testingtext').text('Gagal menyimpan. Periksa koneksi jaringan anda.');
+            $('#testingtext').slideDown(function(){
+                setTimeout(function(){
+                    $('#testingtext').fadeOut(1000);
+                },3000);
+            });
+        });
+    }
 
     $(".dragbox").draggable({
 
@@ -269,6 +279,9 @@ $(".dropbox").droppable({
                         url : "/main/gtd_post_kanban_update/?idnya=" + searchkey + "&slot=todo",
                         success : function(){
                             tersimpan();
+                        },
+                        error : function(){
+                            gagal();
                         }
                     });
                     $("#eye_" + searchkey).html("<span class='fui-gear'></span>");
@@ -299,6 +312,9 @@ $(".dropbox").droppable({
                         url : "/main/gtd_post_kanban_update/?idnya=" + searchkey + "&slot=doing",
                         success : function(){
                             tersimpan();
+                        },
+                        error : function(){
+                            gagal();
                         }
                         });
 
@@ -330,9 +346,9 @@ $(".dropbox").droppable({
                         url : "/main/gtd_post_kanban_update/?idnya=" + searchkey + "&slot=done",
                         success : function(){
                             tersimpan();
-                            //setTimeout(function(){
-                            //$("#" + searchkey).fadeOut("slow");
-                            //}, 500);
+                        },
+                        error : function(){
+                            gagal();
                         }
                     });
                     $("#eye_" + searchkey).html("<span class='fui-check'></span>");

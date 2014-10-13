@@ -137,10 +137,10 @@ function simpan(){
         </div>	
     <input type="hidden" id="ticket_id" name="ticket_id" value="">
     <input type="hidden" id="ticket_owner" name="ticket_owner" value="">
-    <button type="button" style="margin-left:10px" class="pull-right btn btn-warning" onclick="hide_editor()"><span class="fui-list"></span></button>
-	<button type="button"  style="margin-left:10px" class="pull-right btn btn-primary" onclick="simpan()">Simpan</button>
-    <a id="lebihlanjut" href=""><button type="button" class="pull-right btn btn-default" >Lebih lanjut</button></a>
-    <button type="button" class="hint--right pull-left btn btn-default" data-hint="Ambil alih..." id="ambil_alih" onclick="ambil_alih_tiket()"></button>
+    <button type="button" style="margin-left:10px" class="pull-right btn btn-warning hint--bottom" data-hint="Kembali ke Post It / Batal"  onclick="hide_editor()"><span class="fui-list"></span></button>
+	<button type="button"  style="margin-left:10px" class="pull-right btn btn-primary hint--bottom" data-hint="Simpan perubahan tiket" onclick="simpan()">Simpan</button>
+    <a id="lebihlanjut" href=""><button data-hint="Lihat detail tiket dan perangkat" type="button" class="pull-right btn btn-default hint--bottom" >Lebih lanjut</button></a>
+    <button type="button" class="hint--bottom pull-left btn btn-default" data-hint="Ambil alih..." id="ambil_alih" onclick="ambil_alih_tiket()"></button>
         <br><br>
 		                </form>
     
