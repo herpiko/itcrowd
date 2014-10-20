@@ -41,8 +41,18 @@
 		                <li><a href="/main"><span class="fui-checkbox-checked"></span> Post It</a></li>
 		                <li><a href="/main/tindakan"><span class="fui-new"></span> Tindakan</a></li>
 		                <li><a href="/main/perangkat"><span class="fui-gear"></span> Perangkat</a></li>
-		                <li><a href="#"><span class="fui-lock"></span> Akun</a></li>
 		         
+			               <ul class="nav navbar-nav navbar-left">
+			                 <li class="dropdown">
+			                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fui-gear"></span> Pustaka Data <b class="caret"></b></a>
+			                  <span class="dropdown-arrow"></span>
+			                  <ul class="dropdown-menu">
+			                    <li><a href="/admin/" target="_blank">Orang</a></li>
+			                    <li><a href="/admin/" target="_blank">Lokasi</a></li>
+			                    <li><a href="/admin/" target="_blank">Kategori</a></li>
+			                  </ul>
+			                </li>           
+			               </ul>
 		                {% endif %}
 		               </ul>
 		               
