@@ -23,4 +23,5 @@ urlpatterns = patterns('',
 	url(r'^gtd_update_json_ticket_owner/', views.gtd_update_json_ticket_owner, name='gtd_update_json_ticket_owner'),
 	url(r'^gtd_update_json_ticket/', views.gtd_update_json_ticket, name='gtd_update_json_ticket'),
 	url(r'^tindakan_kanban_populate/', views.tindakan_kanban_populate, name='tindakan_kanban_populate'),
+	url(r'^pustaka_orang/', views.pustaka_orang, name='pustaka_orang'),
 		)

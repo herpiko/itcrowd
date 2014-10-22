@@ -208,6 +208,17 @@ def tindakan_kanban_populate(request):
         Kanban.objects.get_or_create(noid_tin=x, slot='todo', urut=0, owner='piko', archived='0')
     return HttpResponseRedirect("/main")
 
+def pustaka_orang(request):
+    if request.user.is_authenticated():
+        context = RequestContext(request)
+        from main.models import User
+        users = User.objects.all()
+        current_user = request.user.get_username()
+        context_dict = {'users':users,'current_user':current_user}
+
+        return render_to_response('main/pustaka_orang.html', context_dict, context)
+
+
 def tindakan(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
