@@ -125,9 +125,12 @@ def gtd_get_json_by_id(request):
 
         from main.models import Kanban, Hardware, User, Tindakan, Lokasi, Kathw
         data = Tindakan.objects.filter(noid_tin = idnya)
+        for x in data:
+            x.tanggal_tutup = db2tgl(x.tanggal_tutup)
         from django.core import serializers
         gtd_data = serializers.serialize('json', data)
         return HttpResponse(gtd_data, mimetype="application/json")
+
 def gtd_get_json_ticket_owner_by_id(request):
     if request.user.is_authenticated():
         context=RequestContext(request)
@@ -151,7 +154,7 @@ def gtd_update_json_ticket_owner(request):
 def gtd_update_json_ticket(request):
     if request.user.is_authenticated():
         context=RequestContext(request)
-        tutup_tiket = request.POST["tutup_tiket"]
+        tutup_tiket = tgl2db(request.POST["tutup_tiket"])
         penyelesaian = request.POST["penyelesaian"]
         owner = request.POST["owner"]
         noid_tin = request.POST["noid_tin"]
