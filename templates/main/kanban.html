@@ -60,8 +60,12 @@ function hide_editor(){
         });
     }
 function ambil_alih_tiket(){
-        $("#ambil_alih").text("Pemegang tiket : {{current_user}}");
+        $("#ambil_alih").slideUp(function(){
+            $("#ambil_alih").text("Pemegang tiket : {{current_user}}");
+            $("#ambil_alih").slideDown();
+        });
         $("#ticket_owner").attr("value","{{current_user}}");
+            
         } 
 
 function simpan(){
@@ -140,7 +144,7 @@ function simpan(){
     <button type="button" style="margin-left:10px" class="pull-right btn btn-warning hint--bottom" data-hint="Kembali ke Post It / Batal"  onclick="hide_editor()"><span class="fui-list"></span></button>
 	<button type="button"  style="margin-left:10px" class="pull-right btn btn-primary hint--bottom" data-hint="Simpan perubahan tiket" onclick="simpan()">Simpan</button>
     <a id="lebihlanjut" href=""><button data-hint="Lihat detail tiket dan perangkat" type="button" class="pull-right btn btn-default hint--bottom" >Lebih lanjut</button></a>
-    <button type="button" class="hint--bottom pull-left btn btn-default" data-hint="Ambil alih..." id="ambil_alih" onclick="ambil_alih_tiket()"></button>
+    <button type="button" class="hint--bottom pull-left btn btn-info" data-hint="Ambil alih..." id="ambil_alih" onclick="ambil_alih_tiket()"></button>
         <br><br>
 		                </form>
     
@@ -148,7 +152,7 @@ function simpan(){
 
                 
         <div id="kanban-editor">
-        <div class="dropbox" id="todo"><div class="dropbox_text"><h5>To Do (<span id="todo_coordinate"></span>)</h5></div>
+        <div class="dropbox" id="todo"><div class="dropbox_text"><h5>To Do (<span id="todo_coordinate">0</span>)</h5></div>
          <div>
             <a href="#tindakan_modal" data-toggle="modal">
                 <span class="hint--top" data-hint="Buat tiket baru" id="add_button">
@@ -157,8 +161,8 @@ function simpan(){
             </a>
          </div>
         </div>
-        <div class="dropbox" id="doing"><div class="dropbox_text"><h5>Doing (<span id="doing_coordinate"></span>)</h5></div></div>
-        <div class="dropbox" id="done"><div class="dropbox_text"><h5>Done (<span id="done_coordinate"></span>)</h5></div>
+        <div class="dropbox" id="doing"><div class="dropbox_text"><h5>Doing (<span id="doing_coordinate">0</span>)</h5></div></div>
+        <div class="dropbox" id="done"><div class="dropbox_text"><h5>Done (<span id="done_coordinate">0</span>)</h5></div>
         
         <!-- <div>
             <a href="#" id="clear_button_act">

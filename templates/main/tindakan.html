@@ -8,10 +8,9 @@
     </head>
 <body>
 	{% block button_block %}
-    <h4 class="pull-left">Aksi ({{ banyak }})</h4>
+    <h4 class="pull-left">Tindakan ({{ banyak }})</h4>
   <div class="pull-left	">
-   
-    
+      
 			              <ul class="nav navbar-nav navbar-right">
 			                 <li class="dropdown">
 			                  <a id="status_string"  href="#" class="dropdown-toggle" data-toggle="dropdown">Status 
@@ -31,7 +30,7 @@
 
 			                  <span class="dropdown-arrow"></span>
 			                  <ul class="dropdown-menu" style="background-color:#48C9B0;">
-			                    <li><a href="/main/">Semua</a></li>
+			                    <li><a href="/main/tindakan">Semua</a></li>
 			                    
 			                    <li class="divider"></li>
 			                  	<li><a href="/main/tindakan/?filter=status&status=Proses">Proses</a></li>
@@ -44,7 +43,7 @@
 			        
 			</div>
 	<div class="pull-right">
-			<a class="btn btn-primary" href="#tindakan_modal" data-toggle="modal"><span class="fui-plus"></span><span id="tindakanbaru_label">Tindakan baru</span></a>
+			<a class="btn btn-primary" href="#tindakan_modal" data-toggle="modal"><span class="fui-plus"></span><span id="tindakanbaru_label"></span></a>
 			
 
 			

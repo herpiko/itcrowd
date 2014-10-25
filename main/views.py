@@ -214,9 +214,131 @@ def pustaka_orang(request):
         from main.models import User
         users = User.objects.all()
         current_user = request.user.get_username()
-        context_dict = {'users':users,'current_user':current_user}
+        banyak = 0
+        for user in users:
+            if user.is_staff==True and user.is_superuser==True and user.is_active==True:
+                user.level=0
+            if user.is_staff==True and user.is_superuser==False and user.is_active==True:
+                user.level=1
+            if user.is_staff==False and user.is_superuser==False and user.is_active==False:
+                user.level=2
+            banyak = banyak + 1
+
+        context_dict = {'users':users,'current_user':current_user, 'banyak':banyak}
 
         return render_to_response('main/pustaka_orang.html', context_dict, context)
+
+def pustaka_orang_sunting(request):
+    if request.user.is_authenticated():
+        context = RequestContext(request)
+        email = request.POST['email']
+        username = request.POST['username']
+        username =  username.lower()
+        first_name = request.POST['first_name']
+        password = request.POST['password']
+        import md5
+        user_level = request.POST['user_level']
+        from main.models import User
+        staff = False
+        superuser = False
+        active = False
+        if user_level == "0":
+            staff=True
+            superuser=True
+            active=True
+        if user_level == "1":
+            staff=False
+            superuser=False
+            active=True
+        if user_level == "2":
+            staff=False
+            superuser=False
+            active=False
+            password=username
+        user = User.objects.get(username=username)
+        user.is_staff = staff
+        user.is_superuser = superuser
+        user.is_active = active
+        user.first_name = first_name
+        user.email = email
+        if password != "":
+            user.password = password
+        user.save()
+        return HttpResponseRedirect("/main/pustaka_orang")
+
+def pustaka_orang_update(request):
+    if request.user.is_authenticated():
+        context = RequestContext(request)
+        email = request.POST['email']
+        username = request.POST['username']
+        username =  username.lower()
+        first_name = request.POST['first_name']
+        password = request.POST['password']
+        mode = request.POST['mode']
+        user_level = request.POST['user_level']
+        from main.models import User
+        if mode == "baru":
+            import md5
+            if password == '':
+                passwd = md5.new()
+                password = passwd.update(username)
+            user = User.objects.create_user(username=username,
+                        email=email,
+                        password=password)
+            staff = False
+            superuser = False
+            active = False
+            if user_level == "0":
+                staff=True
+                superuser=True
+                active=True
+            if user_level == "1":
+                staff=True
+                superuser=False
+                active=True
+            if user_level == "2":
+                staff=False
+                superuser=False
+                active=False
+                password=username
+            user = User.objects.get(username=username)
+            user.is_staff = staff
+            user.is_superuser = superuser
+            user.is_active = active
+            user.first_name = first_name
+            user.save()
+        else :
+            if user_level == "0":
+                staff=True
+                superuser=True
+                active=True
+            if user_level == "1":
+                staff=True
+                superuser=False
+                active=True
+            if user_level == "2":
+                staff=False
+                superuser=False
+                active=False
+            user = User.objects.get(username=username)
+            user.is_staff = staff
+            user.is_superuser = superuser
+            user.is_active = active
+            user.first_name = first_name
+            if password != "":
+                user.password = password
+            user.save()
+        return HttpResponseRedirect("/main/pustaka_orang")
+
+def pustaka_orang_hapus(request):
+    if request.user.is_authenticated():
+        if request.method == 'GET':
+            noid = request.GET['noid']
+            from main.models import User
+            user = User.objects.filter(id=noid)
+            user.delete()
+
+            return HttpResponseRedirect("/main/pustaka_orang")
 
 
 def tindakan(request):
@@ -330,7 +452,8 @@ def tindakan_status(request):
         if status=='Proses':
             if Kanban.objects.filter(noid_tin=noid_tin).exists():
                 kanban = Kanban.objects.filter(noid_tin=noid_tin).get()
-                kanban.slot = 'todo'
+                if kanban.slot == 'done':
+                    kanban.slot = 'todo'
                 kanban.archived = '0'
                 kanban.save()
             else :

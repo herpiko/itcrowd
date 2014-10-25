@@ -9,7 +9,180 @@
  </head>
 <body>
 {% block body_block %}
-<h1>Hello</h1>
+<div>
+        <h4 class="pull-left">Pustaka : Orang ({{banyak}})</h4>
+
+<div class="pull-right">
+        <a class="btn btn-primary" href="#modal" data-toggle="modal" onclick="pustaka_orang_baru();"><span class="fui-plus"></span></a>
+</div>
+<script>
+
+    function pustaka_orang_baru(){ 
+        $("#first_name").val("");
+        $("#username").val("");
+        $("#email_val").val("");
+        $("#email").hide();
+        $("#nama").hide();
+        $("#password_div").hide();
+        $("#user_level").val("---");
+        $("#modallabel").text("Tambah Orang");
+        $("#mode").val("baru");
+    }
+</script>
+<br>
+<br>
+
+<table width="100%" class="table table-stripped table-hover table-bordered">
+        <thead>
+        <tr>
+            <td>ID</td>
+            <td>Nama</td>
+            <td>Email</td>
+            <td>Username</td>
+            <td>Level</td>
+            <td>is_staff</td>
+            <td>is_superuser</td>
+            <td>is_active</td>
+        </tr>
+</thead>
+{% for user in users %}
+    <tr>
+    <td>{{ user.id }}</td>
+    <td>{{ user.first_name }}</td>
+    <td>{{ user.email }}</td>
+    <td>{{ user.username }}</td>
+    <td>{{ user.level }}</td>
+    <td>{{ user.is_staff }}</td>
+    <td>{{ user.is_superuser }}</td>
+    <td>{{ user.is_active }}</td>
+    <td width="20"><a href="#modal" data-toggle="modal" onclick="return sunting('{{user.id}}','{{user.level}}','{{user.username}}','{{user.first_name}}','{{user.email}}');"><span class="fui-list"></span></a></td>
+    <td width="20"><a href="/main/pustaka_orang_hapus/?noid={{user.id}}" onclick="return confirm_delete()"><span class="fui-cross"></span></a></td>
+
+    </tr>
+
+{% endfor %}
+</table>
+<script>
+    function confirm_delete(){
+        return confirm('Menghapus berarti menghapus data lain yang memiliki kaitan dengan item ini. Anda yakin ingin menghapus?');
+    }
+    function sunting(noid,level,username,first_name,email){
+        if (level!="2"){
+            $("#nama").show();
+            $("#email").show();
+            //$("#password_div").show();
+            if (level=="0"){
+                $("#user_level").val("0");
+            }
+            if (level=="1"){
+                $("#user_level").val("1");
+            }
+            $("#first_name").val(first_name);
+            $("#username").val(username);
+            $("#email_val").val(email);
+            //$("#password").val("********");
+            //$("#passwordlagi").val("********");
+        } else {
+            $("#nama").show();
+            $("#email").hide();
+            //$("#password_div").hide();
+            $("#user_level").val("2");
+            $("#first_name").val(first_name);
+            $("#username").val(username);
+            $("#email_val").val(email);
+            //$("#password").val("********");
+            //$("#passwordlagi").val("********");
+        }
+        $("#modallabel").text("Sunting");
+        $("#username_div").hide();
+        $("#mode").val("sunting");
+    }
+</script>
+
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            
+            <h4 class="modal-title" id="modallabel">Tambah Orang</h4>
+            </div>
+            <div class="modal-body">
+                <form id="modal-form" class="form-horizontal" role="form" name="orang_baru" method="post" action="/main/pustaka_orang_update/">
+                	{% csrf_token %}
+                    <input type="hidden" id="mode" name="mode" value="baru">
+                	<div class="form-group">
+                		<label class="control-label col-sm-3">Level</label>
+                		<div class="col-sm-9">
+                                <select id="user_level"  onchange="show_password_div()" type="text" class="form-control" name="user_level" value="">
+                                                        
+                                    <option value="---" disabled selected>---</option>
+                                    <option value="0">Anggota tim (full control)</option>
+                                    <option value="1">Supervisor (read only)</option>
+                                    <option value="2">Penanggung jawab aset</option>
+                                </select>
+                		</div>
+                	</div>	
+                    <div id="nama" style="display:none">
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Nama</label>
+                		<div class="col-sm-9">
+                		<input type="text" class="form-control" id="first_name" name="first_name" placeholder="Nama lengkap/ Peruntukan aset" value="">
+                		</div>
+                	</div>	
+                	<div class="form-group" id="username_div">
+                        <label class="control-label col-sm-3">Username</label>
+                		<div class="col-sm-9">
+                		<input type="text" class="form-control" id="username" name="username" placeholder="Username" value="">
+                		</div>
+                	</div>	
+                    </div>
+                	<div class="form-group" id="email" style="display:none">
+                        <label class="control-label col-sm-3">Email</label>
+                		<div class="col-sm-9">
+                		<input type="text" class="form-control" id="email_val" name="email" placeholder="Email" value="">
+                		</div>
+                	</div>	
+                    <script>
+                        function show_password_div(){
+                                if($("#user_level").val() != "2"){
+                                    $("#password_div").slideDown();
+                                    $("#email").slideDown();
+                                    $("#nama").slideDown();
+                                }
+                                if($("#user_level").val() == "2"){
+                                    $("#password_div").slideUp();
+                                    $("#nama").slideDown();
+                                    $("#email").slideUp();
+                                }
+                                
+                        }
+                    </script>
+
+                    <div id="password_div" style="display:none">
+                    <div class="form-group">
+                		<label class="control-label col-sm-3">Password</label>
+                		<div class="col-sm-9">
+                		<input type="password" class="form-control" id="password" name="password" placeholder="" value="">
+                		</div>	
+                	</div>	
+                	<div class="form-group">
+                		<label class="control-label col-sm-3">Password lagi</label>
+                		<div class="col-sm-9">
+                		<input type="password" class="form-control" id="passwordlagi" name="passwordlagi" placeholder="" value="">
+                		</div>	
+                	</div>
+                    </div>    
+            </div>
+            <div class="modal-footer">
+                    <!--                <a href="#" class="btn btn-default pull-right" onclick="return show_password_div();">Ganti password</a>-->
+                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                <button type="button input" class="btn btn-primary">Simpan</button>
+                </form>
+        </div>
+    </div>
+  </div>
+</div><!--modal end -->
+</div>
 {% endblock %}
 
 </body>
