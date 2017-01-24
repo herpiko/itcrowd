@@ -4,6 +4,7 @@ Named after a British sitcom `The IT Crowd` because I've similiar job descs as M
 
 ITCrowd is a Trello/kanban clone with customized flows to fill my own needs. I didn't remember the `root` and other users password except my own. You can login with username `piko` and `okip` as password to manage other user(s). The db already feeded up with dump data to help you understand how to work with this app.
 
+<img src="https://cloud.githubusercontent.com/assets/2534060/22257731/83778e24-e291-11e6-860e-73655b6b35f6.png">
 
 ## Requirements
 
