@@ -1,6 +1,6 @@
 # ITCrowd
 
-Named after a British sitcom `The IT Crowd` because I've similiar job descs as Chris and Richard at the time I wrote this app. Do n ot expect sleek lines of code since I wrote this when still learning Python and Django.
+Named after a British sitcom `The IT Crowd` because I've similiar job descs as Moss and Roy at the time I wrote this app. Do not expect sleek lines of code since I wrote this when still learning Python and Django.
 
 ITCrowd is a Trello/kanban clone with customized flows to fill my own needs. I didn't remember the `root` and other users password except my own. You can login with username `piko` and `okip` as password to manage other user(s). The db already feeded up with dump data to help you understand how to work with this app.
 
